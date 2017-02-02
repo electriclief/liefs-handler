@@ -5,6 +5,8 @@
     static callbackThrottleId: any;
     static resizeCallbackThrottle: number = 0;
     static delayUntilStart: number = 200; // milliseconds
+    static DivIdsInvisible: Array<string> = [];
+    static DivIdsVisible: Array<string> = [];
 
     label: string;
     myArgsObj: any;
@@ -53,11 +55,52 @@
     }
     static resizeEvent(e: Event = null) {
         console.log("Resize Event");
+        let showIds: Array<string> = [];
         for (let eachHandler of Handler.handlers) {
             eachHandler.chooseContainer();
             eachHandler.update();
+            showIds = uniqueArray(showIds, Object.keys(eachHandler.activeContainer.lastUpdate));
+            ;
         }
     }
+
+    ShowAndHide(): void {
+        let index;
+        Handler.DivIdsInvisible = [];
+        Handler.DivIdsVisible = [];
+        for (let key in items) if (el(key)) DivIdsInvisible.push(key);
+
+        for (let itemId in update(1000, 1000, container)) {
+            index = DivIdsInvisible.indexOf(itemId);
+            if (index > -1) {
+                DivIdsInvisible.splice(index, 1);
+                DivIdsVisible.push(itemId);
+
+                smallit(el(itemId), "visible");
+                if (isItIn(itemId, dragBars)) smallit(el(itemId + "_dragBar"), "visible");
+            }
+        }
+        for (let ItemId of DivIdsInvisible) {
+            smallit(el(ItemId), "hidden");
+            if (isItIn(ItemId, dragBars)) smallit(el(ItemId + "_dragBar"), "hidden");
+        }
+    }
+
+    smallit(e: HTMLElement, visibility: string): void {
+        let stylesObj: any;
+        if (visibility === "hidden") stylesObj = {visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"};
+        else stylesObj = {visibility: "visible"};
+        directiveSetStyles(e, stylesObj);
+    }
+
+
+
+
+
+
+
+
+
     update() {
       this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
       console.log(this.activeContainer.lastUpdate);
@@ -70,11 +113,11 @@
             console.log("Starting With Container: " + eachLayout.container.label);
           else if (this.activeContainer.label !== eachLayout.container.label)
             console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
-          this.activeContainer = <Container>eachLayout.container;
+          this.activeContainer = eachLayout.container;
           break;
         }
       if (!this.activeContainer) {
-        this.activeContainer = <Container>(this.layouts[this.layouts.length - 1]).container;
+        this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
         console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
       }
     }
@@ -101,6 +144,12 @@
         throw reference + " Expected " + expected + " received " + received + ".";
     }
 };
+
+ function uniqueArray(array: Array<any>, optionalConcatArray: Array<any> = []) {
+    let a = array.concat(optionalConcatArray);
+    for (let i = 0; i < a.length; ++i) for (let j = i + 1; j < a.length; ++j) if (a[i] === a[j]) a.splice(j--, 1);
+    return a;
+}
 
  function nthIndex(str: string, pat: string, n: number): number {
     let L = str.length, i = -1;
