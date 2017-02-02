@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>liefs-layout-manager Test001</title>
+
+    <script src="index_.js"></script>
+    <!-- include spec files here... -->
+
+</head>
+
+<body>
+  <div id="TopLeft">TopLeft</div>
+  <div id="TopMid">TopMid</div>
+  <div id="TopRight">TopRight</div>
+
+  <div id="Tree">
+      This page is and example of:<br>
+      Nesting Containers and Items<br><br>
+      Resize this page to see effects<br>
+      View Source of this page <span style="color:red">(Ctrl-u)</span> To understand<br><br>
+      Um... This seems too easy...
+  </div>
+
+  <div id="MainTop">MainTop</div>
+  <div id="MainLeft">MainLeft</div>
+
+  <div id="MainMid" style="overflow: auto"></div>
+
+  <div id="MainRight">MainRight</div>
+  <div id="MainBottom">MainBottom</div>
+
+  <div id="BottomLeft">BottomLeft</div>
+  <div id="BottomRight">BottomRight</div>
+</body>
+
+</html>
+<script>
+v("Master",
+	h("Top", "80px",
+		I("TopLeft", "100px"),
+		I("TopMid", "100%"),
+		I("TopRight", "100px")),
+		h("AllMid", "100%",
+			I("Tree", "150px"),
+			v("Mains", "100%",
+				I("MainTop", "100px"),
+				h("Hmain", "100%",
+					I("MainLeft", "15%"),
+					I("MainMid", "70%"),
+					I("MainRight", "15%")
+				),
+				I("MainBottom", "100px")
+			)
+		),
+	h("Bottoms", "100px",
+		I("BottomLeft", "50%"),
+		I("BottomRight", "50%")
+	)
+);
+</script>

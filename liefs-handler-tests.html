@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>liefs-layout-manager liefs-lib Tests Jasmine Spec Runner v2.5.2</title>
+
+    <link rel="shortcut icon" type="image/png" href="../../node_modules/jasmine-core/images/jasmine_favicon.png">
+    <link rel="stylesheet" href="../../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+
+    <script src="../../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+    <script src="../../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="../../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+    <!-- include source files here... -->
+    <script src="index_.js"></script>
+    <!-- include spec files here... -->
+
+</head>
+
+<body>
+</body>
+
+</html>
+<script>
+    function ri(item) { // remove instance number - or no check will ever pass
+        delete item.instance;
+        delete item.selector;
+        return item;
+    }
+    var jasmineTests = true;
+    var testNumber = 5;
+    var testString = "one:two:three:four";
+    var testFunction = function() {};
+    var testOn = {
+        a: 1,
+        b: 2,
+        c: 3
+    };
+    var testOs = {
+        a: "1",
+        b: "2",
+        c: "3"
+    };
+    var testAn = [1, 2, 3];
+    var testAs = ["1", "2", "3"];
+    var testAAs = [
+        ["1", "2", "3"],
+        ["1", "2", "3"]
+    ];
+
+    var menuItem = new Item("Menu", "200px");
+    var contentItem = new Item("Content", "100%");
+    var arrayOfItems = [menuItem, contentItem];
+
+    var masterContainerH = new Container("Master", true, arrayOfItems, 4);
+    var masterContainerV = new Container("Master", false, arrayOfItems, 4);
+    var masterItemH = new Item("Master", "0px", undefined, undefined, masterContainerH);
+    var masterItemV = new Item("Master", "0px", undefined, undefined, masterContainerV);
+
+    v("Master",
+        h("Top", "80px",
+            I("TopLeft", "100px"),
+            I("TopMid", "100%"),
+            I("TopRight", "100px")),
+        h("AllMid", "100%",
+            I("Tree", "150px"),
+            v("Mains", "100%",
+                I("MainTop", "100px"),
+                h("Hmain", "100%",
+                    I("MainLeft", "15%"),
+                    I("MainMid", "70%"),
+                    I("MainRight", "15%")
+                ),
+                I("MainBottom", "100px")
+            )
+        ),
+        h("Bottoms", "100px",
+            I("BottomLeft", "50%"),
+            I("BottomRight", "50%")
+        )
+    );
+    // let make fake Class b
+    var b = (function() {
+        function b() {
+            this.myArgsObj = argsObj(arguments);
+            this.setArgsObj = setArgsObj;
+            this.label = this.setArgsObj("string", 0, "tests ");
+        }
+        return b;
+    }());
+    // and make an instance of b called x
+    var x = new b("one", "two", "three", 4, () => {}, menuItem);
+
+    describe("HANDLER", () => {
+        it("Verify myArgsObj is Working", () => {
+            expect(x.myArgsObj.string).toEqual(['one', 'two', 'three']);
+            expect(x.myArgsObj.number).toEqual([4]);
+            expect(ri(x.myArgsObj.Item)).toEqual([ri(menuItem)]);
+            expect(x.label).toBe("one");
+        });
+    });
+
+    var nlbc = new Layout("byClass", masterItemH, (x, y) => {
+        return true;
+    })
+    var nlbf = L("byFunction", masterItemH, (x, y) => {
+        return true;
+    });
+    var nl = L(masterItemH, (x, y) => {
+        return true;
+    });
+
+    describe("new Layout", () => {
+        it("First Layout", () => {
+            expect(nlbc.container).toEqual(masterItemH.container);
+            expect(nlbf.container).toEqual(masterItemH.container);
+            expect(nl.container).toEqual(masterItemH.container);
+            expect(nlbc.label).toBe("byClass");
+            expect(nlbf.label).toBe("byFunction");
+            expect(nl.label).toBe(undefined);
+            expect(nlbc.isActive).toBe(true);
+            expect(nlbf.isActive).toBe(true);
+            expect(nl.isActive).toBe(true);
+            expect(nlbc.conditionalFunction(100, 100)).toBe(true);
+            expect(nlbf.conditionalFunction(100, 100)).toBe(true);
+            expect(nl.conditionalFunction(100, 100)).toBe(true);
+        });
+    });
+
+    var nlgbc = new LayoutGroup("ByClass", nlbc, nlbf);
+    var nlgbf = LG("ByFunction", nlbc, nlbf);
+    var nlg = LG(nlbc, nlbf);
+
+    describe("new LayoutGroup", () => {
+        it("First LayoutGroup", () => {
+            expect(nlgbc.label).toBe("ByClass");
+            expect(nlgbf.label).toBe("ByFunction");
+            expect(nlg.label).toBe(undefined);
+
+            expect(nlg.layouts).toEqual([nlbc, nlbf]);
+            expect(nlgbf.layouts).toEqual([nlbc, nlbf]);
+            expect(nlgbc.layouts).toEqual([nlbc, nlbf]);
+
+            nlgbc.add(nl);
+
+            expect(nlgbc.layouts).toEqual([nlbc, nlbf, nl]);
+        });
+    });
+
+    var nh = new Handler("NewHandler", nlgbc);
+    var nh2 = new Handler("NewHandler2", nlg);
+
+    describe("new Handler", () => {
+        it("First Handler", () => {
+            expect(nh.label).toBe("NewHandler");
+            expect(nh.CCG).toBe(nlgbc);
+            expect(Handler.CCGS[0]).toBe(nlgbc);
+            expect(Handler.CCGS[1]).toBe(nlg);
+            expect(Handler.CCGS.length).toBe(2);
+        });
+        it("Second Handler", () => {
+            expect(nh2.label).toBe("NewHandler2");
+            expect(nh2.CCG).toBe(nlg);
+        });
+    });
+</script>

@@ -1,0 +1,78 @@
+import { liefsError, TypeOf, CheckArgTypes, throwType, isStart, argsObj, setArgsObj } from "liefs-lib";
+import { Coord } from "liefs-coordinates";
+import { Item, I, v, h, items, getItem } from "liefs-item";
+import { Container, containers, getContainer } from "liefs-container";
+
+export class Layout {
+  label: string;
+  isActive: boolean = true;
+  container: Container;
+  conditionalFunction: Function;
+  myArgsObj: any;
+  constructor(...Arguments: any[]) {
+    this.myArgsObj = argsObj(arguments);
+    setArgsObj(this.label, "string");
+    setArgsObj(this.conditionalFunction, "function");
+    setArgsObj(this.container, "Container");
+    if ("Item" in this.myArgsObj) this.container = (this.myArgsObj.Item[0]).container;
+    if (!(this.container) || !(this.conditionalFunction))
+      liefsError.badArgs("At Least One Function and One Item/Container",
+        JSON.stringify(Object.keys(this.myArgsObj)), "Create Instance Of Layout()");
+  }
+  off () {this.isActive = false; }
+  on () {this.isActive = true; }
+
+}
+export function L(...Arguments: any[]): Layout { return new Layout(...Arguments); }
+
+export class LayoutGroup {
+  label: string;
+  position: Coord;
+  isActive: boolean = true;
+  layouts: Array<Layout>;
+  activeLayout: Layout;
+  constructor(...Arguments: any[]) {
+    let myArgsObj = argsObj(arguments);
+    setArgsObj(this.label, "string");
+    if ("Layout" in myArgsObj) this.layouts = myArgsObj.Layout;
+    else liefsError.badArgs("Layout Group only takes Layout Ojects As Arguments.", JSON.stringify(Object.keys(myArgsObj)), "Create Instance Of LayoutGroup()");
+  }
+  add (layout: Layout) { this.layouts.push(layout); }
+  off () {this.isActive = false; }
+  on () {this.isActive = true; }
+}
+export function LG(...Arguments: any[]): LayoutGroup { return new LayoutGroup(...Arguments); }
+
+export class Handler {
+  static isActive: boolean = false;
+  static callbackThrottleId: any;
+  static resizeCallbackThrottle: number = 0;
+  static CCGS: Array<LayoutGroup> = [];
+
+  static onStart() { setTimeout( setTimeout(Handler.startHandler(), 0) , 0); }
+
+  static startHandler() {
+    Handler.watchForResizeEvent();
+  }
+
+  static resizeEvent(e: Event = null) {
+//        checkWinWH();                       // get latest co-ordinates from system
+//        establishCurrentContainer();        // Figure out what Master Container to use
+//        mapContainer();                      // update Dom
+    }
+  static watchForResizeEvent(): void {
+    window.onresize = (e: Event) => {
+      window.clearTimeout(Handler.callbackThrottleId);
+      Handler.callbackThrottleId = window.setTimeout(Handler.resizeEvent(e), Handler.resizeCallbackThrottle);
+    };
+  }
+  CCG: LayoutGroup;
+  constructor( CCG: LayoutGroup ) {
+    this.CCG = CCG;
+    Handler.CCGS.push(CCG);
+    if (!Handler.isActive) { setTimeout(() => { if (Handler.isActive) Handler.startHandler(); }, 200); Handler.isActive = true; }
+  }
+}
+export function H(...LayoutGroups: Array<LayoutGroup>): void {
+  for (let eachLayoutGroup of LayoutGroups) new Handler(eachLayoutGroup);
+}

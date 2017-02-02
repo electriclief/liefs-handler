@@ -1,0 +1,22 @@
+{
+  "name": "liefs-handler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "liefs-container": "electriclief/liefs-container",
+    "liefs-coordinates": "electriclief/liefs-coordinates",
+    "liefs-item": "electriclief/liefs-item",
+    "liefs-lib": "electriclief/liefs-lib",
+    "liefs-layout": "electriclief/liefs-layout"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.5.2"
+  }
+}
