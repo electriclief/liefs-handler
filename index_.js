@@ -504,7 +504,7 @@ class Container {
             let height = thisItem.size.height + container.margin * 2;
             let x = thisItem.size.x - container.margin;
             let y = thisItem.size.y - container.margin;
-            if ("is_a_container" in thisItem && (thisItem["is_a_container"])) {
+            if ("container" in thisItem && (thisItem["container"])) {
                 if (includeParents)
                     returnObject[thisItem.label] = thisItem.size;
                 let temp = Container.updateRecursive(width, height, thisItem.container, x, y);
