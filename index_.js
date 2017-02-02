@@ -34,26 +34,40 @@ class Handler {
                 Handler.startHandler(); }, Handler.delayUntilStart);
         }
     }
+    static createDivList() {
+        for (let id of Object.keys(Item.items))
+            if (Item.items[id][0].el)
+                Handler.DivObj[id] = Item.items[id][0].el;
+        for (let id of Object.keys(Container.containers))
+            if (Container.containers[id].el)
+                Handler.DivObj[id] = Container.containers[id].el;
+        for (let handler of Handler.handlers)
+            if (handler.el)
+                Handler.DivObj[handler.label] = handler.el;
+    }
     static startHandler() {
         console.log("Handler Started");
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
+        Handler.createDivList();
+        console.log(Handler.DivObj);
         Handler.watchForResizeEvent();
         Handler.resizeEvent();
     }
     static resizeEvent(e = null) {
         console.log("Resize Event");
+        //        let fullUpdate: { [index: string]: Container; } = {};
         let showIds = [];
         for (let eachHandler of Handler.handlers) {
             eachHandler.chooseContainer();
             eachHandler.update();
-            showIds = uniqueArray(showIds, Object.keys(eachHandler.activeContainer.lastUpdate));
-            ;
         }
+        //        Handler.showAndHide(showIds);
     }
-    ShowAndHide() {
+    static showAndHide() {
         let index;
-        Handler.DivIdsInvisible = [];
+        Handler.DivIdsInvisible = Object.keys(Item.items).concat(Object.keys(Container.containers)).concat();
+        uniqueArray(Object.keys(Item.items), Object.keys(Container.containers));
         Handler.DivIdsVisible = [];
         for (let key in items)
             if (el(key))
@@ -84,7 +98,7 @@ class Handler {
     }
     update() {
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
-        console.log(this.activeContainer.lastUpdate);
+        //      console.log(this.activeContainer.lastUpdate);
     }
     chooseContainer() {
         this.position.getSource(this.el);
@@ -107,6 +121,7 @@ Handler.handlers = [];
 Handler.isActive = false;
 Handler.resizeCallbackThrottle = 0;
 Handler.delayUntilStart = 200; // milliseconds
+Handler.DivObj = {};
 Handler.DivIdsInvisible = [];
 Handler.DivIdsVisible = [];
 function H(...Arguments) { return new Handler(...Arguments); }
