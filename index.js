@@ -23,6 +23,12 @@ export class Handler {
             this.el = document.getElementById(this.label);
         Handler.handlers.push(this);
     }
+    static watchForResizeEvent() {
+        window.onresize = (e) => {
+            window.clearTimeout(Handler.callbackThrottleId);
+            Handler.callbackThrottleId = window.setTimeout(Handler.resizeEvent(e), Handler.resizeCallbackThrottle);
+        };
+    }
     static activate() {
         if (!(Handler.isActive)) {
             Handler.isActive = true;
@@ -40,16 +46,29 @@ export class Handler {
     static resizeEvent(e = null) {
         console.log("Resize Event");
         for (let eachHandler of Handler.handlers) {
+            eachHandler.chooseContainer();
+            eachHandler.update();
         }
-        //        checkWinWH();                       // get latest co-ordinates from system
-        //        establishCurrentContainer();        // Figure out what Master Container to use
-        //        mapContainer();                      // update Dom
     }
-    static watchForResizeEvent() {
-        window.onresize = (e) => {
-            window.clearTimeout(Handler.callbackThrottleId);
-            Handler.callbackThrottleId = window.setTimeout(Handler.resizeEvent(e), Handler.resizeCallbackThrottle);
-        };
+    update() {
+        this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
+        console.log(this.activeContainer.lastUpdate);
+    }
+    chooseContainer() {
+        this.position.getSource(this.el);
+        for (let eachLayout of this.layouts)
+            if (eachLayout.conditionalFunction(this.position.width, this.position.height)) {
+                if (!this.activeContainer)
+                    console.log("Starting With Container: " + eachLayout.container.label);
+                else if (this.activeContainer.label !== eachLayout.container.label)
+                    console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
+                this.activeContainer = eachLayout.container;
+                break;
+            }
+        if (!this.activeContainer) {
+            this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
+            console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
+        }
     }
 }
 Handler.handlers = [];
