@@ -14,6 +14,7 @@
     isActive: boolean = true;
     layouts: Array<Layout>;
     activeContainer: Container;
+    selector = () => { return "#" + this.label; };
 
     constructor(...Arguments: any[]) {
         this.myArgsObj = argsObj(arguments);
@@ -27,7 +28,8 @@
             this.layouts = this.myArgsObj.Layout;
         else liefsError.badArgs("Layouts, OR Arrays of Layouts", "Got Both", "new Handler()");
 
-        if (this.label) this.el = document.getElementById(this.label);
+        if (isUniqueSelector(this.selector())) this.el = document.querySelectorAll(this.selector())[0];
+
         Handler.handlers.push(this);
     }
     static watchForResizeEvent(): void {
@@ -68,15 +70,14 @@
             console.log("Starting With Container: " + eachLayout.container.label);
           else if (this.activeContainer.label !== eachLayout.container.label)
             console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
-          this.activeContainer = eachLayout.container;
+          this.activeContainer = <Container>eachLayout.container;
           break;
         }
       if (!this.activeContainer) {
-        this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
+        this.activeContainer = <Container>(this.layouts[this.layouts.length - 1]).container;
         console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
       }
     }
-
 }
  function H(...Arguments: Array<any>) { return new Handler(...Arguments); }
  interface Directive {
@@ -426,7 +427,8 @@ declare var jasmineTests: boolean;
 
         if (this.start === "0px") Container.suspectedRoot = this.container;
 
-        if (!isUniqueSelector(this.selector()) && (!this.container) && !("jasmineTests" in window))
+        if (isUniqueSelector(this.selector())) this.el = document.querySelectorAll(this.selector())[0];
+        else if ((!this.container) && !("jasmineTests" in window))
           liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div",
           "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
       }
@@ -532,11 +534,14 @@ declare var jasmineTests: boolean;
     direction: boolean;
     items: Item[] = [];
     lastUpdate: { [index: string]: Coord };
+    el: Element;
+    selector = () => { return "#" + this.label; };
 
     constructor(label: string, trueIsHor: boolean, items: Item[], margin: number = Container.marginDefault) {
         this.label = label; this.direction = trueIsHor; this.items = items; this.margin = margin;
         Container.containers[label] = Container.lastDefined = this;
         this.itemsCheck();
+        if (isUniqueSelector(this.selector())) this.el = document.querySelectorAll(this.selector())[0];
     }
 
     itemsCheck() {

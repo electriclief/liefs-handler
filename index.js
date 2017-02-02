@@ -1,4 +1,4 @@
-import { liefsError, argsObj, setArgsObj } from "liefs-lib";
+import { liefsError, argsObj, setArgsObj, isUniqueSelector } from "liefs-lib";
 import { Coord } from "liefs-coordinates";
 import { Container } from "liefs-container";
 export class Handler {
@@ -6,6 +6,7 @@ export class Handler {
         this.setArgsObj = setArgsObj;
         this.position = new Coord();
         this.isActive = true;
+        this.selector = () => { return "#" + this.label; };
         this.myArgsObj = argsObj(arguments);
         this.label = this.setArgsObj("string", 0, "LayoutGroup ");
         if ("array_Layout" in this.myArgsObj) {
@@ -19,8 +20,8 @@ export class Handler {
             this.layouts = this.myArgsObj.Layout;
         else
             liefsError.badArgs("Layouts, OR Arrays of Layouts", "Got Both", "new Handler()");
-        if (this.label)
-            this.el = document.getElementById(this.label);
+        if (isUniqueSelector(this.selector()))
+            this.el = document.querySelectorAll(this.selector())[0];
         Handler.handlers.push(this);
     }
     static watchForResizeEvent() {

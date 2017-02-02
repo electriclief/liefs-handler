@@ -19,6 +19,7 @@ export class Handler {
     isActive: boolean = true;
     layouts: Array<Layout>;
     activeContainer: Container;
+    selector = () => { return "#" + this.label; };
 
     constructor(...Arguments: any[]) {
         this.myArgsObj = argsObj(arguments);
@@ -32,7 +33,8 @@ export class Handler {
             this.layouts = this.myArgsObj.Layout;
         else liefsError.badArgs("Layouts, OR Arrays of Layouts", "Got Both", "new Handler()");
 
-        if (this.label) this.el = document.getElementById(this.label);
+        if (isUniqueSelector(this.selector())) this.el = document.querySelectorAll(this.selector())[0];
+
         Handler.handlers.push(this);
     }
     static watchForResizeEvent(): void {
@@ -73,14 +75,13 @@ export class Handler {
             console.log("Starting With Container: " + eachLayout.container.label);
           else if (this.activeContainer.label !== eachLayout.container.label)
             console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
-          this.activeContainer = eachLayout.container;
+          this.activeContainer = <Container>eachLayout.container;
           break;
         }
       if (!this.activeContainer) {
-        this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
+        this.activeContainer = <Container>(this.layouts[this.layouts.length - 1]).container;
         console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
       }
     }
-
 }
 export function H(...Arguments: Array<any>) { return new Handler(...Arguments); }

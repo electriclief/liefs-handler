@@ -3,6 +3,7 @@ class Handler {
         this.setArgsObj = setArgsObj;
         this.position = new Coord();
         this.isActive = true;
+        this.selector = () => { return "#" + this.label; };
         this.myArgsObj = argsObj(arguments);
         this.label = this.setArgsObj("string", 0, "LayoutGroup ");
         if ("array_Layout" in this.myArgsObj) {
@@ -16,8 +17,8 @@ class Handler {
             this.layouts = this.myArgsObj.Layout;
         else
             liefsError.badArgs("Layouts, OR Arrays of Layouts", "Got Both", "new Handler()");
-        if (this.label)
-            this.el = document.getElementById(this.label);
+        if (isUniqueSelector(this.selector()))
+            this.el = document.querySelectorAll(this.selector())[0];
         Handler.handlers.push(this);
     }
     static watchForResizeEvent() {
@@ -327,7 +328,9 @@ class Item {
             Handler.activate();
         if (this.start === "0px")
             Container.suspectedRoot = this.container;
-        if (!isUniqueSelector(this.selector()) && (!this.container) && !("jasmineTests" in window))
+        if (isUniqueSelector(this.selector()))
+            this.el = document.querySelectorAll(this.selector())[0];
+        else if ((!this.container) && !("jasmineTests" in window))
             liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div", "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
     }
     static get(label, instance = 0) {
@@ -430,12 +433,15 @@ let getItem = Item.get;
 class Container {
     constructor(label, trueIsHor, items, margin = Container.marginDefault) {
         this.items = [];
+        this.selector = () => { return "#" + this.label; };
         this.label = label;
         this.direction = trueIsHor;
         this.items = items;
         this.margin = margin;
         Container.containers[label] = Container.lastDefined = this;
         this.itemsCheck();
+        if (isUniqueSelector(this.selector()))
+            this.el = document.querySelectorAll(this.selector())[0];
     }
     static get(label) {
         if (label in Container.containers)
