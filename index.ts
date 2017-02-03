@@ -4,8 +4,6 @@ import { Item, I, v, h, items, getItem } from "liefs-item";
 import { Container, containers, getContainer } from "liefs-container";
 import { Layout } from "liefs-layout";
 
-
-
 export class Handler {
     static handlers: Array<Handler> = [];
     static isActive: boolean = false;
@@ -76,36 +74,24 @@ export class Handler {
             eachHandler.chooseContainer();
             eachHandler.update();
         }
-
+        for (let eachKey of Object.keys(Handler.showObj))
+            if (!Handler.showObj[eachKey].show)
+                directiveSetStyles(Handler.showObj[eachKey].el, {
+                    visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
+                });
     }
-    static Hide() {for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
-
-    /*
-        smallit(e: HTMLElement, visibility: string): void {
-            let stylesObj: any;
-            if (visibility === "hidden") stylesObj = {visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"};
-            else stylesObj = {visibility: "visible"};
-            directiveSetStyles(e, stylesObj);
-        }
-    */
+    static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
     update() {
         let coord: Coord;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
         for (let eachKey of Object.keys(this.activeContainer.lastUpdate))
-          if (eachKey in Handler.showObj) {
-            coord = this.activeContainer.lastUpdate[eachKey];
-            Handler.showObj[eachKey].show = true;
-            directiveSetStyles(Handler.showObj[eachKey].el, {
-              visible: true,
-              left: px(coord.x),
-              top: px(coord.y),
-              width: px(coord.width),
-              height: px(coord.height)
-            });
-
-
-
-          }
+            if (eachKey in Handler.showObj) {
+                coord = this.activeContainer.lastUpdate[eachKey];
+                Handler.showObj[eachKey].show = true;
+                directiveSetStyles(Handler.showObj[eachKey].el, {
+                    visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
+                });
+            }
     }
     chooseContainer() {
         let isSwitch = false;
