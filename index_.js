@@ -52,7 +52,7 @@ class Handler {
         console.log("Handler Started");
         Handler.urlCurrent = window.location.href;
         if (Handler.urlCurrent.slice(0, 4) !== "file")
-            (Handler.urlCurrent = "/" + myIndexOf((Handler.urlCurrent, "/", 2, 0)));
+            (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -376,8 +376,10 @@ class Coord {
 class Item {
     constructor(label, start, min = undefined, max = undefined, container = undefined) {
         this.selector = () => { return "#" + this.label; };
+        this.dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
+        let el;
         this.label = label;
-        this.start = this.current = start;
+        this.start = start;
         if (min)
             this.min = min;
         if (max)
@@ -395,6 +397,17 @@ class Item {
         if (isUniqueSelector(this.selector())) {
             this.el = document.querySelectorAll(this.selector())[0];
             this.el["style"]["position"] = "fixed";
+            if (min || max) {
+                this.dragbar = new Coord();
+                this.current = start;
+                if (document.querySelectorAll(this.dragSelector()).length)
+                    this.dragEl = document.querySelectorAll(this.dragSelector())[0];
+                else {
+                    this.dragEl = document.createElement("div");
+                    this.dragEl.className = "Hdragbar"; // gets updated anyways - this is just a reminder
+                    this.el.appendChild(this.dragEl);
+                }
+            }
         }
         else if ((!this.container) && !("jasmineTests" in window))
             liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div", "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
@@ -540,6 +553,38 @@ class Item {
     }
     static page(item) { return (item.pages) ? item.pages[item.currentPage] : item; }
 }
+/*
+    static dragBar(el) {
+      let styleObj: any = {position: "fixed", "zIndex": el(id).style.zIndex + 1}
+    }
+
+      mapDragBar(id: string, p: Coord) {
+        let styleobj: any, plus: number, currentSize: number;
+
+        if (Object.keys(lastItemDirection).indexOf(id) !== -1)
+        if (dragBars[id]["size"] === undefined) currentSize = marginDefault;
+        else currentSize = parseInt(dragBars[id]["size"]);
+        styleobj = {position: "fixed", "zIndex": el(id).style.zIndex + 1};
+        if (lastItemDirection[id]) {
+          plus = dragBars[id]["leftside"] ? 0 : p["width"];
+          styleobj = Object.assign(styleobj, {
+            left: (p["x"] + plus - (currentSize / 2 )).toString() + "px",
+            width: currentSize.toString() + "px",
+            top: px(p, "y"), height: px(p, "height")
+          });
+        } else {
+          plus = dragBars[id]["leftside"] ? 0 : p["height"];
+          styleobj = Object.assign(styleobj, {
+            left: px(p, "x"), width: px(p, "width"),
+            top: ((p["y"] + plus) - (currentSize / 2)).toString() + "px",
+            height: currentSize.toString() + "px",
+          });
+        }
+        directiveSetStyles(el(id + "_dragBar"), styleobj);
+      }
+
+    }
+*/
 Item.debug = true;
 Item.items = {};
 let I = Item.I;

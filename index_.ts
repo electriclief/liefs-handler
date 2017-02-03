@@ -64,7 +64,7 @@
     static startHandler() {
         console.log("Handler Started");
         Handler.urlCurrent = window.location.href;
-        if (Handler.urlCurrent.slice(0,4) !== "file") (Handler.urlCurrent = "/" + myIndexOf((Handler.urlCurrent, "/", 2, 0)));
+        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -454,47 +454,82 @@ declare var jasmineTests: boolean;
         if (IpageTitle) newItem.pageTitle = IpageTitle;
         return newItem;
     }
-    static nextPage(item_: Item|string, stop: boolean = false) {
-      let item: Item = Item.parseItem(item_);
-      if (item.currentPage + 1 < item.pages.length) Item.setPage(item, item.currentPage + 1);
-      else if (!stop) Item.setPage(item, 0);
+    static nextPage(item_: Item | string, stop: boolean = false) {
+        let item: Item = Item.parseItem(item_);
+        if (item.currentPage + 1 < item.pages.length) Item.setPage(item, item.currentPage + 1);
+        else if (!stop) Item.setPage(item, 0);
     }
-    static backPage(item_: Item|string, stop: boolean = false) {
-      let item: Item = Item.parseItem(item_);
-      if (item.currentPage > 0 ) Item.setPage(item, item.currentPage - 1);
-      else if (!stop) Item.setPage(item, item.pages.length - 1);
+    static backPage(item_: Item | string, stop: boolean = false) {
+        let item: Item = Item.parseItem(item_);
+        if (item.currentPage > 0) Item.setPage(item, item.currentPage - 1);
+        else if (!stop) Item.setPage(item, item.pages.length - 1);
     }
-    static setPage(item_: Item|string, value: string|number) {
-      Item.parseValue(value, Item.parseItem(item_));
-      Handler.resizeEvent();
+    static setPage(item_: Item | string, value: string | number) {
+        Item.parseValue(value, Item.parseItem(item_));
+        Handler.resizeEvent();
     }
-    static parseValue(value_: string|number, item: Item) {
-      let foundPage: boolean = false;
-      if (TypeOf(value_, "string")) {
-        for (let i = 0; i < item.pages.length; i++)
-          if (item.pages[i].label === <string>value_) {
-            item.currentPage = i;
-            foundPage = true;
-            break;
-          }
-        if (!foundPage) liefsError.badArgs("page id not found", <string>value_, "Item setPage");
-      }
-      else {
-        if (item.pages.length - 1 < <number>value_ ) liefsError.badArgs("Max Pages for " + item.label + " is " + item.pages.length, (<number>value_).toString(), "Item setPage");
-        item.currentPage = <number>value_;
-      }
+    static parseValue(value_: string | number, item: Item) {
+        let foundPage: boolean = false;
+        if (TypeOf(value_, "string")) {
+            for (let i = 0; i < item.pages.length; i++)
+                if (item.pages[i].label === <string>value_) {
+                    item.currentPage = i;
+                    foundPage = true;
+                    break;
+                }
+            if (!foundPage) liefsError.badArgs("page id not found", <string>value_, "Item setPage");
+        }
+        else {
+            if (item.pages.length - 1 < <number>value_) liefsError.badArgs("Max Pages for " + item.label + " is " + item.pages.length, (<number>value_).toString(), "Item setPage");
+            item.currentPage = <number>value_;
+        }
     }
-    static parseItem(item_: Item|string): Item {
-      let item: Item;
-      if (TypeOf(item_, "string")) {
-        if (!isItIn(<string>item_, Item.items)) liefsError.badArgs("Item Name Not Identified", <string>item_, "Item - setPage()");
-        item = Item.items[<string>item_][0];
-      }
-      else item = <Item>item_;
-      if (!item.pages) liefsError.badArgs("Item " + item.label + " to be defined with pages", "it wasn't", "Item - setPage()");
-      return item;
+    static parseItem(item_: Item | string): Item {
+        let item: Item;
+        if (TypeOf(item_, "string")) {
+            if (!isItIn(<string>item_, Item.items)) liefsError.badArgs("Item Name Not Identified", <string>item_, "Item - setPage()");
+            item = Item.items[<string>item_][0];
+        }
+        else item = <Item>item_;
+        if (!item.pages) liefsError.badArgs("Item " + item.label + " to be defined with pages", "it wasn't", "Item - setPage()");
+        return item;
     }
     static page(item: Item): Item { return (item.pages) ? item.pages[item.currentPage] : item; }
+
+    /*
+        static dragBar(el) {
+          let styleObj: any = {position: "fixed", "zIndex": el(id).style.zIndex + 1}
+        }
+
+          mapDragBar(id: string, p: Coord) {
+            let styleobj: any, plus: number, currentSize: number;
+
+            if (Object.keys(lastItemDirection).indexOf(id) !== -1)
+            if (dragBars[id]["size"] === undefined) currentSize = marginDefault;
+            else currentSize = parseInt(dragBars[id]["size"]);
+            styleobj = {position: "fixed", "zIndex": el(id).style.zIndex + 1};
+            if (lastItemDirection[id]) {
+              plus = dragBars[id]["leftside"] ? 0 : p["width"];
+              styleobj = Object.assign(styleobj, {
+                left: (p["x"] + plus - (currentSize / 2 )).toString() + "px",
+                width: currentSize.toString() + "px",
+                top: px(p, "y"), height: px(p, "height")
+              });
+            } else {
+              plus = dragBars[id]["leftside"] ? 0 : p["height"];
+              styleobj = Object.assign(styleobj, {
+                left: px(p, "x"), width: px(p, "width"),
+                top: ((p["y"] + plus) - (currentSize / 2)).toString() + "px",
+                height: currentSize.toString() + "px",
+              });
+            }
+            directiveSetStyles(el(id + "_dragBar"), styleobj);
+          }
+
+        }
+    */
+
+
     static debug = true;
     static items: { [index: string]: Array<Item>; } = {};
 
@@ -503,7 +538,7 @@ declare var jasmineTests: boolean;
     start: string;
     current: string;
     lastDirection: boolean;
-    size: Coord; // = new Coord();
+    size: Coord;
     min: string;
     max: string;
     container: Container;
@@ -512,10 +547,14 @@ declare var jasmineTests: boolean;
     currentPage: number;
     el: Element;
     selector = () => { return "#" + this.label; };
+    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
+    dragEl: Element;
+    dragbar: Coord;
 
     constructor(label: string, start: string, min: string = undefined, max: string = undefined, container: Container = undefined) {
+        let el: any;
         this.label = label;
-        this.start = this.current = start;
+        this.start = start;
         if (min) this.min = min;
         if (max) this.max = max;
         if (container) this.container = container;
@@ -529,13 +568,24 @@ declare var jasmineTests: boolean;
         if (this.start === "0px") Container.suspectedRoot = this.container;
 
         if (isUniqueSelector(this.selector())) {
-          this.el = document.querySelectorAll(this.selector())[0];
-          this.el["style"]["position"] = "fixed";
+            this.el = document.querySelectorAll(this.selector())[0];
+            this.el["style"]["position"] = "fixed";
+
+            if (min || max) {
+                this.dragbar = new Coord(); this.current = start;
+                if (document.querySelectorAll(this.dragSelector()).length)
+                    this.dragEl = document.querySelectorAll(this.dragSelector())[0];
+                else {
+                    this.dragEl = document.createElement("div");
+                    this.dragEl.className = "Hdragbar"; // gets updated anyways - this is just a reminder
+                    this.el.appendChild(this.dragEl);
+                }
+            }
         }
         else if ((!this.container) && !("jasmineTests" in window))
-          liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div",
-          "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
-      }
+            liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div",
+                "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
+    }
 
 }
 

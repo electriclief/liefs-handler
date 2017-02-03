@@ -56,7 +56,7 @@ export class Handler {
         console.log("Handler Started");
         Handler.urlCurrent = window.location.href;
         if (Handler.urlCurrent.slice(0, 4) !== "file")
-            (Handler.urlCurrent = "/" + myIndexOf((Handler.urlCurrent, "/", 2, 0)));
+            (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
