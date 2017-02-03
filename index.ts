@@ -91,10 +91,9 @@ export class Handler {
             if (origKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[origKey];
                 Handler.showObj[origKey].show = true;
-                directiveSetStyles(/*Handler.showObj[origKey].el*/, {
+                directiveSetStyles(Item.page(this.activeContainer.item(origKey)).el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
-                //                console.log("After Show"); console.log(Handler.showObj[origKey].el);
             }
         }
     }

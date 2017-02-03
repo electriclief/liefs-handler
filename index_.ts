@@ -86,10 +86,9 @@
             if (origKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[origKey];
                 Handler.showObj[origKey].show = true;
-                directiveSetStyles(/*Handler.showObj[origKey].el*/, {
+                directiveSetStyles(Item.page(this.activeContainer.item(origKey)).el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
-                //                console.log("After Show"); console.log(Handler.showObj[origKey].el);
             }
         }
     }
@@ -467,7 +466,7 @@ declare var jasmineTests: boolean;
     static parseItem(item_: Item|string): Item {
       let item: Item;
       if (TypeOf(item_, "string")) {
-        if (!(<string>item_ in Object.keys(Item.items))) liefsError.badArgs("Item Name Not Identified", <string>item_, "Item - setPage()");
+        if (!isItIn(<string>item_, Item.items)) liefsError.badArgs("Item Name Not Identified", <string>item_, "Item - setPage()");
         item = Item.items[<string>item_][0];
       }
       else item = <Item>item_;
