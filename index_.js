@@ -405,7 +405,10 @@ class Item {
                 else {
                     this.dragEl = document.createElement("div");
                     this.dragEl.className = "Hdragbar"; // gets updated anyways - this is just a reminder
-                    this.el.appendChild(this.dragEl);
+                    if (this.el.firstChild)
+                        this.el.insertBefore(this.dragEl, this.el.firstChild);
+                    else
+                        this.el.appendChild(this.dragEl);
                 }
             }
         }
