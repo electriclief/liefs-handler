@@ -729,6 +729,7 @@ declare var jasmineTests: boolean;
     selector = () => { return "#" + this.label; };
 
     constructor(label: string, trueIsHor: boolean, items: Item[], margin: number = Container.marginDefault) {
+        console.log("Defined Container" + label);
         this.label = label; this.direction = trueIsHor; this.items = items; this.margin = margin;
         Container.containers[label] = Container.lastDefined = this;
         this.itemsCheck();

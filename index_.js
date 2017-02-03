@@ -623,6 +623,7 @@ class Container {
     constructor(label, trueIsHor, items, margin = Container.marginDefault) {
         this.items = [];
         this.selector = () => { return "#" + this.label; };
+        console.log("Defined Container" + label);
         this.label = label;
         this.direction = trueIsHor;
         this.items = items;
