@@ -85,18 +85,16 @@ export class Handler {
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
     update() {
-        let coord: Coord;
+        let coord: Coord; let pageKey: string;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
-        for (let eachKey of Object.keys(this.activeContainer.lastUpdate)) {
-            //            console.log(eachKey + " of " + Object.keys(this.activeContainer.lastUpdate));
-            if (eachKey in Handler.showObj) {
-                coord = this.activeContainer.lastUpdate[eachKey];
-                Handler.showObj[eachKey].show = true;
-                //                console.log("before Show"); console.log(Handler.showObj[eachKey].el);
-                directiveSetStyles(Handler.showObj[eachKey].el, {
+        for (let origKey of Object.keys(this.activeContainer.lastUpdate)) {
+            if (origKey in Handler.showObj) {
+                coord = this.activeContainer.lastUpdate[origKey];
+                Handler.showObj[origKey].show = true;
+                directiveSetStyles(/*Handler.showObj[origKey].el*/, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
-                //                console.log("After Show"); console.log(Handler.showObj[eachKey].el);
+                //                console.log("After Show"); console.log(Handler.showObj[origKey].el);
             }
         }
     }

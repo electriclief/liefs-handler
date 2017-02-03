@@ -73,14 +73,13 @@ class Handler {
         Handler.showObj[eachKey].show = false; }
     update() {
         let coord;
+        let pageKey;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
-        for (let eachKey of Object.keys(this.activeContainer.lastUpdate)) {
-            //            console.log(eachKey + " of " + Object.keys(this.activeContainer.lastUpdate));
-            if (eachKey in Handler.showObj) {
-                coord = this.activeContainer.lastUpdate[eachKey];
-                Handler.showObj[eachKey].show = true;
-                //                console.log("before Show"); console.log(Handler.showObj[eachKey].el);
-                directiveSetStyles(Handler.showObj[eachKey].el, {
+        for (let origKey of Object.keys(this.activeContainer.lastUpdate)) {
+            if (origKey in Handler.showObj) {
+                coord = this.activeContainer.lastUpdate[origKey];
+                Handler.showObj[origKey].show = true;
+                directiveSetStyles(/*Handler.showObj[origKey].el*/ , {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
             }
@@ -520,6 +519,7 @@ class Item {
             liefsError.badArgs("Item " + item.label + " to be defined with pages", "it wasn't", "Item - setPage()");
         return item;
     }
+    static page(item) { return (item.pages) ? item.pages[item.currentPage] : item; }
 }
 Item.debug = true;
 Item.items = {};
@@ -633,7 +633,14 @@ class Container {
     }
     update(width, height, xOffset = 0, yOffset = 0, includeParents = false) {
         this.lastUpdate = Container.updateRecursive(width, height, this, xOffset, yOffset, includeParents);
-        //        return this.lastUpdate;
+    }
+    item(label) {
+        for (let item of this.items)
+            if (item.label === label)
+                return item;
+            else if (item.container && item.container.item(label))
+                return item.container.item(label);
+        return undefined;
     }
 }
 Container.debug = true;
