@@ -271,7 +271,7 @@ function loadDoc(eid, page) {
     }
 }
 function directiveSetStyles(el, stylesObject) {
-    for (let key in stylesObject)
+    for (let key of Object.keys(stylesObject))
         el["style"][key] = stylesObject[key];
 }
 function waitForIt(conditionFunction, actionFunction) {

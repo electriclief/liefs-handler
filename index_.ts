@@ -272,8 +272,7 @@
 }
 
  function directiveSetStyles(el: Element, stylesObject: {}): void {
-    for (let key in stylesObject)
-        el["style"][key] = stylesObject[key];
+    for (let key of Object.keys(stylesObject)) el["style"][key] = stylesObject[key];
 }
 
  function waitForIt(conditionFunction: Function, actionFunction: Function): void {
