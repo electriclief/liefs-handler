@@ -375,6 +375,31 @@
 
 declare var jasmineTests: boolean;
 
+ class Dragbar {
+  Selector = () => { return this.parent.selector() + " > ." + (this.parent.lastDirection ? "H" : "V") + "dragbar"; };
+  el: Element;
+  size: Coord = new Coord();
+  front: boolean = true;
+  parent: Item;
+  width: number;
+  constructor(item: Item, front: boolean = true, width = undefined) {
+    this.front = front;
+    if (document.querySelectorAll(this.Selector()).length)
+        this.el = document.querySelectorAll(this.Selector())[0];
+    else {
+        this.el = document.createElement("div");
+        this.el.className = "Hdragbar"; // gets updated anyways - this is just a reminder
+        if (this.parent.el.firstChild) this.parent.el.insertBefore(this.el, this.parent.el.firstChild);
+        else this.parent.el.appendChild(this.el);
+    }
+    this.width = width || Container.get(this.parent.label).margin || Container.marginDefault;
+  }
+  calc() {
+    this.parent.size;
+    Container.get(this.parent.label).direction;
+  }
+}
+
  class Item {
     static get(label: string, instance = 0) {
         if (label in Item.items) return Item.items[label][instance];
@@ -395,6 +420,7 @@ declare var jasmineTests: boolean;
         let Iitems: Array<Item>, Icontainer: Container, IisHor: boolean;
         let isItem: string;
         let IpageTitle: string;
+        let dragFront: boolean = true;
         if ("array_Item" in myArgsObj) {
             if (!("Item" in myArgsObj)) myArgsObj.Item = [];
             for (let eachArray of myArgsObj["array_Item"])
@@ -405,6 +431,10 @@ declare var jasmineTests: boolean;
         if ("string" in myArgsObj) {
             for (let i = 0; i < myArgsObj.string.length; i++) {
                 isItem = myArgsObj.string[i];
+                if (isItem[0] === "*") {
+                    myArgsObj.string[i] = isItem.slice(1);
+                    dragFront = false;
+                }
                 if (isItem[0] === "-" || isItem[0] === "|") {
                     IisHor = (isItem[0] === "-");
                     myArgsObj.string[i] = isItem.slice(1);
@@ -452,6 +482,7 @@ declare var jasmineTests: boolean;
         }
         newItem = new Item(Ilabel, Istart, Imin, Imax, Icontainer);
         if (IpageTitle) newItem.pageTitle = IpageTitle;
+        if (!dragFront) newItem.dragBar.front = dragFront;
         return newItem;
     }
     static nextPage(item_: Item | string, stop: boolean = false) {
@@ -537,19 +568,21 @@ declare var jasmineTests: boolean;
     instance: number;
     start: string;
     current: string;
-    lastDirection: boolean;
+    lastDirection: boolean = true;
     size: Coord;
     min: string;
     max: string;
     container: Container;
     pages: Array<Item>;
-    pageTitle: string;
+    pageTitle: string;  //////// this will be leaving
     currentPage: number;
     el: Element;
     selector = () => { return "#" + this.label; };
-    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
-    dragEl: Element;
-    dragbar: Coord;
+    dragBar: Dragbar;
+//    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
+//    dragEl: Element;
+//    dragbar: Coord;
+//    dragFront: boolean = true;
 
     constructor(label: string, start: string, min: string = undefined, max: string = undefined, container: Container = undefined) {
         let el: any;
@@ -571,17 +604,8 @@ declare var jasmineTests: boolean;
             this.el = document.querySelectorAll(this.selector())[0];
             this.el["style"]["position"] = "fixed";
 
-            if (min || max) {
-                this.dragbar = new Coord(); this.current = start;
-                if (document.querySelectorAll(this.dragSelector()).length)
-                    this.dragEl = document.querySelectorAll(this.dragSelector())[0];
-                else {
-                    this.dragEl = document.createElement("div");
-                    this.dragEl.className = "Hdragbar"; // gets updated anyways - this is just a reminder
-                    if (this.el.firstChild) this.el.insertBefore(this.dragEl, this.el.firstChild);
-                    else this.el.appendChild(this.dragEl);
-                }
-            }
+            if (min || max) this.dragBar = new Dragbar(this);
+
         }
         else if ((!this.container) && !("jasmineTests" in window))
             liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div",
@@ -597,6 +621,12 @@ declare var jasmineTests: boolean;
  let getItem = Item.get;
 
  class Container {
+  static of(item: Item) {
+    for (let eachKey of Object.keys(Container.containers))
+      if (Container.containers[eachKey].items.indexOf(item) > -1)
+        return Container.containers[eachKey];
+    return undefined;
+  }
     static get(label: string) {
         if (label in Container.containers) return Container.containers[label];
         return undefined;
@@ -710,7 +740,7 @@ declare var jasmineTests: boolean;
     update(width: number, height: number, xOffset: number = 0, yOffset: number = 0, includeParents: boolean = false): void /*{ [index: string]: Coord }*/ {
         this.lastUpdate = Container.updateRecursive(width, height, this, xOffset, yOffset, includeParents);
     }
-    item(label: string): Item {
+    itemByLabel(label: string): Item {
       for (let item of this.items)
         if (item.label === label) return item;
           else if (item.container && item.container.item(label)) return item.container.item(label);

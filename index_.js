@@ -373,10 +373,37 @@ class Coord {
         }
     }
 }
+class Dragbar {
+    constructor(item, front = true, width = undefined) {
+        this.Selector = () => { return this.parent.selector() + " > ." + (this.parent.lastDirection ? "H" : "V") + "dragbar"; };
+        this.size = new Coord();
+        this.front = true;
+        this.front = front;
+        if (document.querySelectorAll(this.Selector()).length)
+            this.el = document.querySelectorAll(this.Selector())[0];
+        else {
+            this.el = document.createElement("div");
+            this.el.className = "Hdragbar"; // gets updated anyways - this is just a reminder
+            if (this.parent.el.firstChild)
+                this.parent.el.insertBefore(this.el, this.parent.el.firstChild);
+            else
+                this.parent.el.appendChild(this.el);
+        }
+        this.width = width || Container.get(this.parent.label).margin || Container.marginDefault;
+    }
+    calc() {
+        this.parent.size;
+        Container.get(this.parent.label).direction;
+    }
+}
 class Item {
+    //    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
+    //    dragEl: Element;
+    //    dragbar: Coord;
+    //    dragFront: boolean = true;
     constructor(label, start, min = undefined, max = undefined, container = undefined) {
+        this.lastDirection = true;
         this.selector = () => { return "#" + this.label; };
-        this.dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
         let el;
         this.label = label;
         this.start = start;
@@ -397,20 +424,8 @@ class Item {
         if (isUniqueSelector(this.selector())) {
             this.el = document.querySelectorAll(this.selector())[0];
             this.el["style"]["position"] = "fixed";
-            if (min || max) {
-                this.dragbar = new Coord();
-                this.current = start;
-                if (document.querySelectorAll(this.dragSelector()).length)
-                    this.dragEl = document.querySelectorAll(this.dragSelector())[0];
-                else {
-                    this.dragEl = document.createElement("div");
-                    this.dragEl.className = "Hdragbar"; // gets updated anyways - this is just a reminder
-                    if (this.el.firstChild)
-                        this.el.insertBefore(this.dragEl, this.el.firstChild);
-                    else
-                        this.el.appendChild(this.dragEl);
-                }
-            }
+            if (min || max)
+                this.dragBar = new Dragbar(this);
         }
         else if ((!this.container) && !("jasmineTests" in window))
             liefsError.badArgs("Selector Search for '" + this.label + "' to find ONE matching div", "Matched " + document.querySelectorAll(this.selector()).length.toString() + " times", "Handler Item Check");
@@ -435,6 +450,7 @@ class Item {
         let Iitems, Icontainer, IisHor;
         let isItem;
         let IpageTitle;
+        let dragFront = true;
         if ("array_Item" in myArgsObj) {
             if (!("Item" in myArgsObj))
                 myArgsObj.Item = [];
@@ -447,6 +463,10 @@ class Item {
         if ("string" in myArgsObj) {
             for (let i = 0; i < myArgsObj.string.length; i++) {
                 isItem = myArgsObj.string[i];
+                if (isItem[0] === "*") {
+                    myArgsObj.string[i] = isItem.slice(1);
+                    dragFront = false;
+                }
                 if (isItem[0] === "-" || isItem[0] === "|") {
                     IisHor = (isItem[0] === "-");
                     myArgsObj.string[i] = isItem.slice(1);
@@ -503,6 +523,8 @@ class Item {
         newItem = new Item(Ilabel, Istart, Imin, Imax, Icontainer);
         if (IpageTitle)
             newItem.pageTitle = IpageTitle;
+        if (!dragFront)
+            newItem.dragBar.front = dragFront;
         return newItem;
     }
     static nextPage(item_, stop = false) {
@@ -608,6 +630,12 @@ class Container {
         if (isUniqueSelector(this.selector()))
             this.el = document.querySelectorAll(this.selector())[0];
     }
+    static of(item) {
+        for (let eachKey of Object.keys(Container.containers))
+            if (Container.containers[eachKey].items.indexOf(item) > -1)
+                return Container.containers[eachKey];
+        return undefined;
+    }
     static get(label) {
         if (label in Container.containers)
             return Container.containers[label];
@@ -701,7 +729,7 @@ class Container {
     update(width, height, xOffset = 0, yOffset = 0, includeParents = false) {
         this.lastUpdate = Container.updateRecursive(width, height, this, xOffset, yOffset, includeParents);
     }
-    item(label) {
+    itemByLabel(label) {
         for (let item of this.items)
             if (item.label === label)
                 return item;
