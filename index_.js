@@ -393,9 +393,22 @@ class Dragbar {
         //    this width = (width) ? width : ()
         this.width = width || Container.of(item).margin || Container.marginDefault;
     }
-    calc() {
-        this.parent.size;
-        Container.get(this.parent.label).direction;
+    update() {
+        for (let eachKey of Object.keys(this.size))
+            this.size[eachKey] = this.parent.size[eachKey];
+        if (Container.of(this.parent).direction) {
+            this.size.x += -Math.round(this.width / 2.0) + ((this.front) ? this.size.width : 0);
+            this.size.width = this.width;
+        }
+        else {
+            this.size.y += -Math.round(this.width / 2.0) + ((this.front) ? this.size.height : 0);
+            this.size.height = this.width;
+        }
+        //  }
+        //  set() {
+        directiveSetStyles(this.el, {
+            visibility: "visible", left: px(this.size.x), top: px(this.size.y), width: px(this.size.width), height: px(this.size.height)
+        });
     }
 }
 class Item {
@@ -580,38 +593,6 @@ class Item {
     }
     static page(item) { return (item.pages) ? item.pages[item.currentPage] : item; }
 }
-/*
-    static dragBar(el) {
-      let styleObj: any = {position: "fixed", "zIndex": el(id).style.zIndex + 1}
-    }
-
-      mapDragBar(id: string, p: Coord) {
-        let styleobj: any, plus: number, currentSize: number;
-
-        if (Object.keys(lastItemDirection).indexOf(id) !== -1)
-        if (dragBars[id]["size"] === undefined) currentSize = marginDefault;
-        else currentSize = parseInt(dragBars[id]["size"]);
-        styleobj = {position: "fixed", "zIndex": el(id).style.zIndex + 1};
-        if (lastItemDirection[id]) {
-          plus = dragBars[id]["leftside"] ? 0 : p["width"];
-          styleobj = Object.assign(styleobj, {
-            left: (p["x"] + plus - (currentSize / 2 )).toString() + "px",
-            width: currentSize.toString() + "px",
-            top: px(p, "y"), height: px(p, "height")
-          });
-        } else {
-          plus = dragBars[id]["leftside"] ? 0 : p["height"];
-          styleobj = Object.assign(styleobj, {
-            left: px(p, "x"), width: px(p, "width"),
-            top: ((p["y"] + plus) - (currentSize / 2)).toString() + "px",
-            height: currentSize.toString() + "px",
-          });
-        }
-        directiveSetStyles(el(id + "_dragBar"), styleobj);
-      }
-
-    }
-*/
 Item.debug = true;
 Item.items = {};
 let I = Item.I;
