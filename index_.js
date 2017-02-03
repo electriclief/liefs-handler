@@ -84,7 +84,7 @@ class Handler {
         for (let origKey of Object.keys(this.activeContainer.lastUpdate)) {
             if (origKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[origKey];
-                pageItem = Item.page(this.activeContainer.item(origKey));
+                pageItem = Item.page(this.activeContainer.itemByLabel(origKey));
                 Handler.showObj[pageItem.label].show = true;
                 directiveSetStyles(pageItem.el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
@@ -390,7 +390,7 @@ class Dragbar {
             else
                 this.parent.el.appendChild(this.el);
         }
-        this.width = width || Container.get(this.parent.label).margin || Container.marginDefault;
+        this.width = width || Container.of(item).margin || Container.marginDefault;
     }
     calc() {
         this.parent.size;
