@@ -501,7 +501,7 @@ class Item {
                 liefsError.badArgs("page id not found", value_, "Item setPage");
         }
         else {
-            if (item.pages.length - 1 > value_)
+            if (item.pages.length - 1 < value_)
                 liefsError.badArgs("Max Pages for " + item.label + " is " + item.pages.length, value_.toString(), "Item setPage");
             item.currentPage = value_;
         }
