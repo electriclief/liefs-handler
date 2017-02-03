@@ -6,6 +6,13 @@
     static resizeCallbackThrottle: number = 0;
     static delayUntilStart: number = 200; // milliseconds
     static showObj: { [index: string]: { show: boolean; el: Element; } } = {};
+    static pageTitle() { return "var Handler.pageTitle = function () { return 'Title ' + whatever}"; }
+    static urlRoot: string;
+    static urlSuffix: string;
+    static urlCurrent: string;
+    static pushPage() {
+
+    }
 
     label: string;
     myArgsObj: any;
@@ -53,8 +60,11 @@
         for (let handler of Handler.handlers)
             if (handler.el) Handler.showObj[handler.label] = { el: handler.el, show: false };
     }
+
     static startHandler() {
         console.log("Handler Started");
+        Handler.urlCurrent = window.location.href;
+        if (Handler.urlCurrent.slice(0,4) !== "file") (Handler.urlCurrent = "/" + myIndexOf((Handler.urlCurrent, "/", 2, 0)));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -80,13 +90,14 @@
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
     update() {
-        let coord: Coord; let pageKey: string;
+        let coord: Coord; let pageItem: Item;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
         for (let origKey of Object.keys(this.activeContainer.lastUpdate)) {
             if (origKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[origKey];
-                Handler.showObj[origKey].show = true;
-                directiveSetStyles(Item.page(this.activeContainer.item(origKey)).el, {
+                pageItem = Item.page(this.activeContainer.item(origKey));
+                Handler.showObj[pageItem.label].show = true;
+                directiveSetStyles(pageItem.el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
             }
@@ -173,7 +184,7 @@
     return value.slice(-1) === "%" || value.slice(-2) === "px";
 }
 
- function px(value: number): string {return value.toString() + "px"; }
+ function px(value: number): string { return value.toString() + "px"; }
 
  function TypeOf(value: any, match: string = undefined): string | boolean {
     let ctype: string = typeof value, temp: string;
@@ -198,7 +209,7 @@
     let target: any;
     if (!(this.myArgsObj)) throw "setArgsObj Empty";
     if ((key in this.myArgsObj) && (index < this.myArgsObj[key].length)) {
-  /*    console.log(ref + "setting to " + this.myArgsObj[key][index]); */
+        /*    console.log(ref + "setting to " + this.myArgsObj[key][index]); */
         target = this.myArgsObj[key][index];
     } // else console.log("index fail -" + key);
     return target;
@@ -230,7 +241,7 @@
 }
 
  function isUniqueSelector(selector: string) {
-  return ((document.querySelectorAll(selector)).length === 1);
+    return ((document.querySelectorAll(selector)).length === 1);
 }
 
  function directive(querrySelectorAll: string, attributesList: Array<string>): Array<{}> {
@@ -312,7 +323,7 @@
     return false;
 }
  function isItIn(key: string, object: {}) {
-//    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
+    //    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
     let keys = Object.keys(object);
     if (keys.indexOf(key) === -1) return null;
     return object[key];
@@ -326,6 +337,16 @@
     let ro = {};
     for (let key in obj) ro[key] = obj[key];
     return ro;
+}
+ function myIndexOf(sstring: string, search: string, occurance: number, start: number) {
+    if (occurance) {
+        start = sstring.indexOf(search, start) + 1;
+        --occurance;
+        if (occurance)
+            return myIndexOf(sstring.slice(start), search, occurance, start);
+        else
+            return sstring.slice(start);
+    } else return sstring;
 }
  class Coord {
     width: number;

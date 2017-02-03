@@ -11,6 +11,13 @@ export class Handler {
     static resizeCallbackThrottle: number = 0;
     static delayUntilStart: number = 200; // milliseconds
     static showObj: { [index: string]: { show: boolean; el: Element; } } = {};
+    static pageTitle() { return "var Handler.pageTitle = function () { return 'Title ' + whatever}"; }
+    static urlRoot: string;
+    static urlSuffix: string;
+    static urlCurrent: string;
+    static pushPage() {
+
+    }
 
     label: string;
     myArgsObj: any;
@@ -58,8 +65,11 @@ export class Handler {
         for (let handler of Handler.handlers)
             if (handler.el) Handler.showObj[handler.label] = { el: handler.el, show: false };
     }
+
     static startHandler() {
         console.log("Handler Started");
+        Handler.urlCurrent = window.location.href;
+        if (Handler.urlCurrent.slice(0,4) !== "file") (Handler.urlCurrent = "/" + myIndexOf((Handler.urlCurrent, "/", 2, 0)));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -85,13 +95,14 @@ export class Handler {
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
     update() {
-        let coord: Coord; let pageKey: string;
+        let coord: Coord; let pageItem: Item;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
         for (let origKey of Object.keys(this.activeContainer.lastUpdate)) {
             if (origKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[origKey];
-                Handler.showObj[origKey].show = true;
-                directiveSetStyles(Item.page(this.activeContainer.item(origKey)).el, {
+                pageItem = Item.page(this.activeContainer.item(origKey));
+                Handler.showObj[pageItem.label].show = true;
+                directiveSetStyles(pageItem.el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
             }

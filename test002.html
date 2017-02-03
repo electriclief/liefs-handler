@@ -86,12 +86,12 @@
     <div id="ListTree">
         <h2 align="center">My Menu</h2>
         <ul>
-            <li onclick='switchTo("Page1");'>Page1</li>
-            <li onclick='switchTo("Page2");'>Page2</li>
-            <li onclick='switchTo("Page3");'>Page3</li>
-            <li onclick='switchTo("Page4");'>Page4</li>
+            <li onclick='Item.setPage("Pages", "Pages");'>Page1</li>
+            <li onclick='Item.setPage("Pages", "Page2");'>Page2</li>
+            <li onclick='Item.setPage("Pages", "Page3");'>Page3</li>
+            <li onclick='Item.setPage("Pages", "Page4");'>Page4</li>
             <li onclick='window.location="http://liefs.paperplane.io/index.html"'>(link) Docs</li>
-            <li onclick='myUse("Small")'>Force Small</li>
+            <li onclick=''>Force Small</li>
         </ul>
     </div>
     <!-- Used Only on Large Layout -->
@@ -108,7 +108,7 @@
     </div>
     <!-- Used Only On Small Layout -->
 
-    <div id="Page1">
+    <div id="Pages">
         <!-- Obviously put ANYTHING in a div -->
         Page 1 Content - Resize Page Width
         <-- this way --> to switch layouts<br><br>
@@ -134,12 +134,19 @@
 
 </html>
 <script>
+function onSelectChange(value) {  // our custom Select Change Function.......
+    if (value[0] === '/')                                 window.location = "http://liefs.paperplane.io"+value;// start of / - link
+    else {
+      var pageNames = Item.get("Pages").pages.map(function (item) { return item.label; })
+      if (pageNames.indexOf(value) > -1) Item.setPage("Pages", value);
+    }
+}
     H("MasterHandler",
         L("SmallLaytou",
             v("Small",
                 I("Header", "100px"),
                 I("SelectTree", "50px"),
-                I("Page1", "100%", I("Page2"), I("Page3"), I("Page4"))
+                I("Pages", "100%", I("Page2"), I("Page3"), I("Page4"))
             ),
             (x, y) => {
                 return (x < 1000) ? true : false;
@@ -150,7 +157,7 @@
                 Item.get("Header"),
                 h("Body", "100%",
                     I("ListTree", "200px"),
-                    Item.get("Page1")
+                    Item.get("Pages")
                 )
             ),
             (x, y) => {
