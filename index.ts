@@ -75,23 +75,30 @@ export class Handler {
             eachHandler.update();
         }
         for (let eachKey of Object.keys(Handler.showObj))
-            if (!Handler.showObj[eachKey].show)
+            if (!Handler.showObj[eachKey].show) {
+                console.log("before Hidden"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
                 });
+                console.log("After Hidden"); console.log(Handler.showObj[eachKey].el);
+            }
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
     update() {
         let coord: Coord;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
-        for (let eachKey of Object.keys(this.activeContainer.lastUpdate))
+        for (let eachKey of Object.keys(this.activeContainer.lastUpdate)) {
+//            console.log(eachKey + " of " + Object.keys(this.activeContainer.lastUpdate));
             if (eachKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[eachKey];
                 Handler.showObj[eachKey].show = true;
+                console.log("before Show"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
+                console.log("After Show"); console.log(Handler.showObj[eachKey].el);
             }
+        }
     }
     chooseContainer() {
         let isSwitch = false;
