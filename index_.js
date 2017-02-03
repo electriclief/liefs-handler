@@ -37,93 +37,86 @@ class Handler {
     static createDivList() {
         for (let id of Object.keys(Item.items))
             if (Item.items[id][0].el)
-                Handler.DivObj[id] = Item.items[id][0].el;
+                Handler.showObj[id] = { el: Item.items[id][0].el, show: false };
         for (let id of Object.keys(Container.containers))
             if (Container.containers[id].el)
-                Handler.DivObj[id] = Container.containers[id].el;
+                Handler.showObj[id] = { el: Container.containers[id].el, show: false };
         for (let handler of Handler.handlers)
             if (handler.el)
-                Handler.DivObj[handler.label] = handler.el;
+                Handler.showObj[handler.label] = { el: handler.el, show: false };
     }
     static startHandler() {
         console.log("Handler Started");
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
-        console.log(Handler.DivObj);
+        console.log(Handler.showObj);
         Handler.watchForResizeEvent();
         Handler.resizeEvent();
     }
     static resizeEvent(e = null) {
         console.log("Resize Event");
-        //        let fullUpdate: { [index: string]: Container; } = {};
-        let showIds = [];
+        Handler.Hide();
         for (let eachHandler of Handler.handlers) {
             eachHandler.chooseContainer();
             eachHandler.update();
         }
-        //        Handler.showAndHide(showIds);
     }
-    static showAndHide() {
-        let index;
-        Handler.DivIdsInvisible = Object.keys(Item.items).concat(Object.keys(Container.containers)).concat();
-        uniqueArray(Object.keys(Item.items), Object.keys(Container.containers));
-        Handler.DivIdsVisible = [];
-        for (let key in items)
-            if (el(key))
-                DivIdsInvisible.push(key);
-        for (let itemId in update(1000, 1000, container)) {
-            index = DivIdsInvisible.indexOf(itemId);
-            if (index > -1) {
-                DivIdsInvisible.splice(index, 1);
-                DivIdsVisible.push(itemId);
-                smallit(el(itemId), "visible");
-                if (isItIn(itemId, dragBars))
-                    smallit(el(itemId + "_dragBar"), "visible");
-            }
+    static Hide() { for (let eachKey of Object.keys(Handler.showObj))
+        Handler.showObj[eachKey].show = false; }
+    /*
+        smallit(e: HTMLElement, visibility: string): void {
+            let stylesObj: any;
+            if (visibility === "hidden") stylesObj = {visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"};
+            else stylesObj = {visibility: "visible"};
+            directiveSetStyles(e, stylesObj);
         }
-        for (let ItemId of DivIdsInvisible) {
-            smallit(el(ItemId), "hidden");
-            if (isItIn(ItemId, dragBars))
-                smallit(el(ItemId + "_dragBar"), "hidden");
-        }
-    }
-    smallit(e, visibility) {
-        let stylesObj;
-        if (visibility === "hidden")
-            stylesObj = { visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px" };
-        else
-            stylesObj = { visibility: "visible" };
-        directiveSetStyles(e, stylesObj);
-    }
+    */
     update() {
+        let coord;
         this.activeContainer.update(this.position.width, this.position.height, this.position.x, this.position.y);
-        //      console.log(this.activeContainer.lastUpdate);
+        for (let eachKey of Object.keys(this.activeContainer.lastUpdate))
+            if (eachKey in Handler.showObj) {
+                coord = this.activeContainer.lastUpdate[eachKey];
+                Handler.showObj[eachKey].show = true;
+                directiveSetStyles(Handler.showObj[eachKey].el, {
+                    visible: true,
+                    left: px(coord.x),
+                    top: px(coord.y),
+                    width: px(coord.width),
+                    height: px(coord.height)
+                });
+            }
     }
     chooseContainer() {
+        let isSwitch = false;
         this.position.getSource(this.el);
         for (let eachLayout of this.layouts)
             if (eachLayout.conditionalFunction(this.position.width, this.position.height)) {
-                if (!this.activeContainer)
+                if (!this.activeContainer) {
                     console.log("Starting With Container: " + eachLayout.container.label);
-                else if (this.activeContainer.label !== eachLayout.container.label)
+                    isSwitch = true;
+                }
+                else if (this.activeContainer.label !== eachLayout.container.label) {
+                    isSwitch = true;
                     console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
-                this.activeContainer = eachLayout.container;
-                break;
+                    this.activeContainer = eachLayout.container;
+                    break;
+                }
+                if (!this.activeContainer) {
+                    isSwitch = true;
+                    this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
+                    console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
+                }
             }
-        if (!this.activeContainer) {
-            this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
-            console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
-        }
+        return isSwitch;
     }
 }
 Handler.handlers = [];
 Handler.isActive = false;
 Handler.resizeCallbackThrottle = 0;
 Handler.delayUntilStart = 200; // milliseconds
-Handler.DivObj = {};
-Handler.DivIdsInvisible = [];
-Handler.DivIdsVisible = [];
+Handler.showObj = {};
 function H(...Arguments) { return new Handler(...Arguments); }
 let liefsError = {
     matchLength: (expected, received, reference = "") => {
@@ -187,6 +180,7 @@ function trimCompare(a, b) {
 function isStart(value) {
     return value.slice(-1) === "%" || value.slice(-2) === "px";
 }
+function px(value) { return value.toString() + "px"; }
 function TypeOf(value, match = undefined) {
     let ctype = typeof value, temp;
     if (ctype === "object")
