@@ -54,7 +54,7 @@ export class Handler {
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
-        console.log(Handler.showObj);
+        //        console.log(Handler.showObj);
         Handler.watchForResizeEvent();
         Handler.resizeEvent();
     }
@@ -67,13 +67,10 @@ export class Handler {
         }
         for (let eachKey of Object.keys(Handler.showObj))
             if (!Handler.showObj[eachKey].show) {
-                console.log("before Hidden");
-                console.log(Handler.showObj[eachKey].el);
+                //                console.log("before Hidden"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
                 });
-                console.log("After Hidden");
-                console.log(Handler.showObj[eachKey].el);
             }
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj))
@@ -86,38 +83,30 @@ export class Handler {
             if (eachKey in Handler.showObj) {
                 coord = this.activeContainer.lastUpdate[eachKey];
                 Handler.showObj[eachKey].show = true;
-                console.log("before Show");
-                console.log(Handler.showObj[eachKey].el);
+                //                console.log("before Show"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "visible", left: px(coord.x), top: px(coord.y), width: px(coord.width), height: px(coord.height)
                 });
-                console.log("After Show");
-                console.log(Handler.showObj[eachKey].el);
             }
         }
     }
     chooseContainer() {
-        let isSwitch = false;
         this.position.getSource(this.el);
         for (let eachLayout of this.layouts)
             if (eachLayout.conditionalFunction(this.position.width, this.position.height)) {
                 if (!this.activeContainer) {
                     console.log("Starting With Container: " + eachLayout.container.label);
-                    isSwitch = true;
                 }
                 else if (this.activeContainer.label !== eachLayout.container.label) {
-                    isSwitch = true;
                     console.log("Switched From Container :" + this.activeContainer.label + " to " + eachLayout.container.label);
-                    this.activeContainer = eachLayout.container;
-                    break;
                 }
-                if (!this.activeContainer) {
-                    isSwitch = true;
-                    this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
-                    console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
-                }
+                this.activeContainer = eachLayout.container;
+                break;
             }
-        return isSwitch;
+        if (!this.activeContainer) {
+            this.activeContainer = (this.layouts[this.layouts.length - 1]).container;
+            console.log("All Layout conditionalFunctions failed! Choosing last in list: " + this.activeContainer.label);
+        }
     }
 }
 Handler.handlers = [];
