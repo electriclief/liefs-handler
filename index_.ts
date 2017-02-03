@@ -312,7 +312,7 @@
     return false;
 }
  function isItIn(key: string, object: {}) {
-    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
+//    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
     let keys = Object.keys(object);
     if (keys.indexOf(key) === -1) return null;
     return object[key];
