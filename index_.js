@@ -470,6 +470,55 @@ class Item {
             newItem.pageTitle = IpageTitle;
         return newItem;
     }
+    static nextPage(item_, stop = false) {
+        let item = Item.parseItem(item_);
+        if (item.currentPage + 1 < item.pages.length)
+            Item.setPage(item, item.currentPage + 1);
+        else if (!stop)
+            Item.setPage(item, 0);
+    }
+    static backPage(item_, stop = false) {
+        let item = Item.parseItem(item_);
+        if (item.currentPage > 0)
+            Item.setPage(item, item.currentPage - 1);
+        else if (!stop)
+            Item.setPage(item, item.pages.length - 1);
+    }
+    static setPage(item_, value) {
+        Item.parseValue(value, Item.parseItem(item_));
+        Handler.resizeEvent();
+    }
+    static parseValue(value_, item) {
+        let foundPage = false;
+        if (TypeOf(value_, "string")) {
+            for (let i = 0; i < item.pages.length; i++)
+                if (item.pages[i].label === value_) {
+                    item.currentPage = i;
+                    foundPage = true;
+                    break;
+                }
+            if (!foundPage)
+                liefsError.badArgs("page id not found", value_, "Item setPage");
+        }
+        else {
+            if (item.pages.length - 1 > value_)
+                liefsError.badArgs("Max Pages for " + item.label + " is " + item.pages.length, value_.toString(), "Item setPage");
+            item.currentPage = value_;
+        }
+    }
+    static parseItem(item_) {
+        let item;
+        if (TypeOf(item_, "string")) {
+            if (!(item_ in Object.keys(Item.items)))
+                liefsError.badArgs("Item Name Not Identified", item_, "Item - setPage()");
+            item = Item.items[item_][0];
+        }
+        else
+            item = item_;
+        if (!item.pages)
+            liefsError.badArgs("Item " + item.label + " to be defined with pages", "it wasn't", "Item - setPage()");
+        return item;
+    }
 }
 Item.debug = true;
 Item.items = {};

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>liefs-layout-manager Test001</title>
+    <script src="index_.js"></script>
+
+    <style>
+        div {
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 5px;
+        }
+
+        div[id^="Page"] {
+            font-size: 200%
+        }
+
+        #Header {
+            background-color: lightgreen;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 90px;
+            font-size: 300%
+        }
+
+        #ListTree {
+            background-color: lightcyan
+        }
+
+        select {
+            width: 100%;
+            height: 100%;
+            background-color: lightcyan;
+            font-size: 150%
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: lightcyan;
+        }
+
+        li {
+            display: block;
+            color: #000;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        li:hover {
+            background-color: #555;
+            color: white;
+        }
+
+        #Page1 {
+            background-color: lightblue
+        }
+
+        #Page2 {
+            background-color: lightsteelblue
+        }
+
+        #Page3 {
+            background-color: aliceblue
+        }
+
+        #Page4 {
+            background-color: powderblue
+        }
+    </style>
+    <!-- style to taste -->
+
+</head>
+
+<body>
+
+    <div id="Header">
+        This Is My Giant Title
+    </div>
+    <!-- Used On Both Layouts -->
+
+    <div id="ListTree">
+        <h2 align="center">My Menu</h2>
+        <ul>
+            <li onclick='switchTo("Page1");'>Page1</li>
+            <li onclick='switchTo("Page2");'>Page2</li>
+            <li onclick='switchTo("Page3");'>Page3</li>
+            <li onclick='switchTo("Page4");'>Page4</li>
+            <li onclick='window.location="http://liefs.paperplane.io/index.html"'>(link) Docs</li>
+            <li onclick='myUse("Small")'>Force Small</li>
+        </ul>
+    </div>
+    <!-- Used Only on Large Layout -->
+
+    <div id="SelectTree">
+        <select onchange="onSelectChange(this.value)"><!-- Select Events are handled in our custom function below on this page-->
+        <option value="Page1">Page 1</option>
+        <option value="Page2">Page 2</option>
+        <option value="Page3">Page 3</option>              <!--Good, ole dependable select. Nothin beats select-->
+        <option value="Page4">Page 4</option>
+        <option value="/index.html">(link) Docs</option>
+        <option value="Large">Force Large</option>
+    </select>
+    </div>
+    <!-- Used Only On Small Layout -->
+
+    <div id="Page1">
+        <!-- Obviously put ANYTHING in a div -->
+        Page 1 Content - Resize Page Width
+        <-- this way --> to switch layouts<br><br>
+            <span style="color:red;font-size: 200%">Frills Version!</span><br><br> Watch Page Title, Page Url Change and Pushed to Browser Stack<br>Back button works now<br> reload now reloads "this page" not the "first page|<br>
+    </div>
+    <!-- Default Page -->
+
+    <div id="Page2">
+        Page 2 Content - Resize Page Width
+        <-- this way --> to switch layouts
+    </div>
+
+    <div id="Page3" style="">
+        Page 3 Content - Resize Page Width
+        <-- this way --> to switch layouts
+    </div>
+
+    <div id="Page4">
+        Page 4 Content - Resize Page Width
+        <-- this way --> to switch layouts
+    </div>
+</body>
+
+</html>
+<script>
+    H("MasterHandler",
+        L("SmallLaytou",
+            v("Small",
+                I("Header", "100px"),
+                I("SelectTree", "50px"),
+                I("Page1", "100%", I("Page2"), I("Page3"), I("Page4"))
+            ),
+            (x, y) => {
+                return (x < 1000) ? true : false;
+            }
+        ),
+        L("LargeLayout",
+            v("Large",
+                Item.get("Header"),
+                h("Body", "100%",
+                    I("ListTree", "200px"),
+                    Item.get("Page1")
+                )
+            ),
+            (x, y) => {
+                return true;
+            }
+        )
+    );
+    /*
+    // editing this next part is fairly intuitive
+        function defineLayout(id) {             // Call this function for each page you have (See Below)
+            V("Large_" + id,                    // our big layout consists of
+                    I("Header", "100px"),       // a header on top with Tree and Page below
+                    h("Body", "100%",
+                            I("ListTree", "200px"),  // Tree on the left,
+                            I(id, "100%")            // Body on the right.
+                    )
+            );
+            V("Small_" + id,                    // In small, no room for tree on left
+                    items['Header'],            // Note: If header changes size, use I("Header", newsize)
+                    I("SelectTree", "50px"),     //
+                    items[id]                   // Small all three stacked in one column.
+            );
+        }
+        function setPage(id) {          // Custom Function to Set Page
+            ManageArray = [             // ManageArray Set, so it governs
+                ["Small_" + id, 800],     // Use "One Big Column" if screen width < 800px
+                ["Large_" + id]           // Otherwise use Large Layout
+            ];
+        }
+        function myPageTitle(id) {return "My Title - " + id} // Edit to suit
+    // its possible you might want to make your select better -- after all nothin beats select
+        function onSelectChange(value) {  // our custom handler for 3 types of choices
+            if (value[0] === '/')                                 window.location = "http://liefs.paperplane.io"+value;// start of / - link
+            else if (containers["_Small_" + value] !== undefined) switchTo(value);        // Defined as Container - Switch
+            else                                                  myUse(value);           // Assume "Set Active Container to"
+        }
+    window.onload = function () {
+    //    waitForIt(function () {return window['loadsDone']}, function () {// If Items defined in urlload un-comment this//
+        marginDefault = 20; // Margins 4 work well, Margins 0 be CRAZY be carefull with css - can mess things up     //
+        for (var eachPage of ['Page1', 'Page2', 'Page3', 'Page4']) defineLayout(eachPage); // see 26 lines up        //
+        // by defining all divs in above line, liefs knows to set visibility properly                                //
+        // If you add pages, be sure to add the id to the above "for loop" array                                     //
+        //
+        use("Large_Page1"); //  (will change higher version) needed, then ignored - pick any existing CONTAINER      //
+        switchTo('Page1');  //   I'm hoping my function name and arguments aren't too confusing here....             //
+        startHandler();     //   Guess what this does!                                                               //
+        if (thisUrl.indexOf("#") !== -1 ){switchTo(thisUrl.slice(thisUrl.indexOf("#")+1));}                          //
+        // Above line is "if url has #, switch to that page                                                          //
+    //    });                                                                                           // ...And This...//
+    };
+    //////////// You probably Don't Need To  Look At The Code Below ///////////////////////////////////////////////////////
+
+        var currentId; // lets remember the last Page Div Id Clicked
+        function myUse(size) {use(size + "_" + currentId);resize_callback([winW, winH]);} // this is silly notation will fix
+        // winW and winH are last screen width and height, trigger callback after use set
+        function switchTo(id) {  // To make things work, lets build our own custom switch function
+            currentId = id;      // make the CurrentId, the one we switched to
+            setPage(id);         // see 7 lines up
+            checkWinWH();        // triggers resize event
+            var displayUrl = thisUrl;                                 // This Part of the functions just tells the browser
+            var temp = thisUrl.indexOf("#");                          // We are faking a new page (tee hee still this one)
+            if (temp !== -1) {                                        // and to push it to the stack
+                displayUrl = thisUrl.slice(0, thisUrl.indexOf("#"));  // Its just for "Frills"
+            }                                                         // and is not at all required
+            document.title = myPageTitle(id);                         // for functionality
+            window.history.pushState({"html": "#" + id, "pageTitle": myPageTitle(id)}, "", displayUrl + "#" + id);
+        }
+
+        window.onpopstate = function (e) { // "When you hit the 'back' button on browser
+            if (e.state) {                 // and somehow I'm still on this page, and not elsewhere
+                if (e.state.html[0] = "#") { // check to see if previous address had a # in the title
+                    currentId = e.state.html.slice(1);setPage(currentId);checkWinWH(); // and set page to that one
+                    document.title = myPageTitle(currentId);                           // with matching title
+                    checkWinWH();                                                      // and trigger refresh
+                }
+            }
+        };
+        var thisUrl = window.location.href;if (thisUrl.slice(0,4) !== "file") thisUrl = "/"+myIndexOf(thisUrl, "/", 2, 0);
+        function myIndexOf(string, search, occurance, start) { if (occurance) {start = string.indexOf(search, start) + 1;
+            --occurance;if (occurance) return myIndexOf(string.slice(start), search, occurance, start); else
+                return string.slice(start);} else return string;}
+    */
+</script>

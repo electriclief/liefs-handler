@@ -435,7 +435,46 @@ declare var jasmineTests: boolean;
         if (IpageTitle) newItem.pageTitle = IpageTitle;
         return newItem;
     }
-
+    static nextPage(item_: Item|string, stop: boolean = false) {
+      let item: Item = Item.parseItem(item_);
+      if (item.currentPage + 1 < item.pages.length) Item.setPage(item, item.currentPage + 1);
+      else if (!stop) Item.setPage(item, 0);
+    }
+    static backPage(item_: Item|string, stop: boolean = false) {
+      let item: Item = Item.parseItem(item_);
+      if (item.currentPage > 0 ) Item.setPage(item, item.currentPage - 1);
+      else if (!stop) Item.setPage(item, item.pages.length - 1);
+    }
+    static setPage(item_: Item|string, value: string|number) {
+      Item.parseValue(value, Item.parseItem(item_));
+      Handler.resizeEvent();
+    }
+    static parseValue(value_: string|number, item: Item) {
+      let foundPage: boolean = false;
+      if (TypeOf(value_, "string")) {
+        for (let i = 0; i < item.pages.length; i++)
+          if (item.pages[i].label === <string>value_) {
+            item.currentPage = i;
+            foundPage = true;
+            break;
+          }
+        if (!foundPage) liefsError.badArgs("page id not found", <string>value_, "Item setPage");
+      }
+      else {
+        if (item.pages.length - 1 > <number>value_ ) liefsError.badArgs("Max Pages for " + item.label + " is " + item.pages.length, (<number>value_).toString(), "Item setPage");
+        item.currentPage = <number>value_;
+      }
+    }
+    static parseItem(item_: Item|string): Item {
+      let item: Item;
+      if (TypeOf(item_, "string")) {
+        if (!(<string>item_ in Object.keys(Item.items))) liefsError.badArgs("Item Name Not Identified", <string>item_, "Item - setPage()");
+        item = Item.items[<string>item_][0];
+      }
+      else item = <Item>item_;
+      if (!item.pages) liefsError.badArgs("Item " + item.label + " to be defined with pages", "it wasn't", "Item - setPage()");
+      return item;
+    }
     static debug = true;
     static items: { [index: string]: Array<Item>; } = {};
 
