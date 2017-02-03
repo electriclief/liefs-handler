@@ -750,7 +750,7 @@ declare var jasmineTests: boolean;
     itemByLabel(label: string): Item {
       for (let item of this.items)
         if (item.label === label) return item;
-          else if (item.container && item.container.item(label)) return item.container.item(label);
+          else if (item.container && item.container.itemByLabel(label)) return item.container.itemByLabel(label);
       return undefined;
     }
 }
