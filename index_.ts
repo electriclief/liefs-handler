@@ -397,6 +397,10 @@ declare var jasmineTests: boolean;
   static mouseDown (e: Event) {
     console.log("MouseDown");
   }
+  static mouseUp (e: Event) {
+    console.log("MouseUp");
+  }
+  static noInit: boolean = true;
   Selector = () => { return this.parent.selector() + " > ." + (this.parent.lastDirection ? "H" : "V") + "dragbar"; };
   el: Element;
   size: Coord = new Coord();
@@ -414,7 +418,10 @@ declare var jasmineTests: boolean;
         if (this.parent.el.firstChild) this.parent.el.insertBefore(this.el, this.parent.el.firstChild);
         else this.parent.el.appendChild(this.el);
     }
+
+    if (Dragbar.noInit) { onEvent(document.body, "mouseup", Dragbar.mouseUp); Dragbar.noInit = false; }
     onEvent(this.el, "mousedown", Dragbar.mouseDown);
+
     this.width = width || Container.of(item).margin || Container.marginDefault;
   }
   update() {
