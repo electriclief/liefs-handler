@@ -77,7 +77,7 @@ export class Handler {
         Handler.resizeEvent();
     }
     static resizeEvent(e = null) {
-        console.log("Resize Event");
+        //        console.log("Resize Event");
         Handler.Hide();
         for (let eachHandler of Handler.handlers) {
             eachHandler.chooseContainer();

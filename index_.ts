@@ -90,7 +90,7 @@
         Handler.resizeEvent();
     }
     static resizeEvent(e: Event = null) {
-        console.log("Resize Event");
+//        console.log("Resize Event");
         Handler.Hide();
         for (let eachHandler of Handler.handlers) {
             eachHandler.chooseContainer();
@@ -454,7 +454,7 @@ declare var jasmineTests: boolean;
     this.width = width || Container.of(item).margin || Container.marginDefault;
   }
   update() {
-    console.log("Dragbar Update Called()");
+//    console.log("Dragbar Update Called()");
     for (let eachKey of Object.keys(this.size)) this.size[eachKey] = this.parent.size[eachKey];
     if (Container.of(this.parent).direction) {
       this.size.x += this.parent.size.width;
@@ -767,8 +767,13 @@ declare var jasmineTests: boolean;
         let totalPercent: number = 0;
         for (let eachItem of this.items)
             if (eachItem.start.slice(-1) === "%") totalPercent += parseInt(eachItem.start.slice(0, -1));
-            else if ((eachItem.start.slice(-2) === "px") && eachItem.dragBar)
+            else if ((eachItem.start.slice(-2) === "px") && eachItem.dragBar) {
+                console.log("before");
+                console.log(eachItem.dragBar.el.className);
                 eachItem.dragBar.el.className = this.direction ? "Hdragbar" : "Vdragbar";
+                console.log("after");
+                console.log(eachItem.dragBar.el.className);
+              }
         if (totalPercent !== 100) liefsError.badArgs(this.label + " to total 100%", " a total of " + totalPercent.toString() + "%", "Container.itemsCheck()");
     }
 
