@@ -414,7 +414,7 @@ class Dragbar {
         //  }
         //  set() {
         directiveSetStyles(this.el, {
-            visibility: "visible", left: px(this.size.x), top: px(this.size.y), width: px(this.size.width), height: px(this.size.height)
+            left: px(this.size.x), top: px(this.size.y), width: px(this.size.width), height: px(this.size.height)
         });
     }
 }
