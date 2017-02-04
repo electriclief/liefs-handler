@@ -66,6 +66,7 @@ export class Handler {
             if (handler.el) Handler.showObj[handler.label] = { el: handler.el, show: false };
     }
 
+
     static startHandler() {
         console.log("Handler Started");
 
@@ -74,6 +75,15 @@ export class Handler {
         style.innerHTML = ".Hdragbar { position: fixed; }";
         style.innerHTML += ".Vdragbar { position: fixed; }";
         document.getElementsByTagName("head")[0].appendChild(style);
+
+        document.body.onmousedown = function(e: Event) {
+           let f = window.event ? event.srcElement : e.target;
+           if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
+             console.log("MouseDown On");
+             console.log(f);
+           }
+        };
+
 
         Handler.urlCurrent = window.location.href;
         if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
