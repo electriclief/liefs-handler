@@ -76,9 +76,9 @@ export class Handler {
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
                 });
-                if (Item.get(eachKey) && Item.get(eachKey).dragBar)
-                    Item.get(eachKey).dragBar.update();
             }
+            else if (Item.get(eachKey) && Item.get(eachKey).dragBar)
+                Item.get(eachKey).dragBar.update();
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj))
         Handler.showObj[eachKey].show = false; }
