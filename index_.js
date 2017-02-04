@@ -411,16 +411,22 @@ class Dragbar {
         }
         if (Dragbar.noInit) {
             onEvent(document.body, "mouseup", Dragbar.mouseUp);
+            onEvent(document.body, "mousemove", Dragbar.mouseMove);
             Dragbar.noInit = false;
         }
-        onEvent(this.el, "mousedown", Dragbar.mouseDown);
+        onEvent(this.el, "mousedown", (e) => { Dragbar.mouseDown(e, this); });
         this.width = width || Container.of(item).margin || Container.marginDefault;
     }
-    static mouseDown(e) {
-        console.log(e);
+    static mouseDown(e, dragbar) {
+        Dragbar.isDown = true;
     }
     static mouseUp(e) {
-        console.log(e);
+        Dragbar.isDown = false;
+    }
+    static mouseMove(e) {
+        if (Dragbar.isDown) {
+            console.log(e.clientX, e.clientY);
+        }
     }
     update() {
         console.log("Dragbar Update Called()");
@@ -441,6 +447,7 @@ class Dragbar {
         });
     }
 }
+Dragbar.isDown = false;
 Dragbar.noInit = true;
 class Item {
     //    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
