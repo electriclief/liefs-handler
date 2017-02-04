@@ -395,6 +395,7 @@ class Dragbar {
         this.width = width || Container.of(item).margin || Container.marginDefault;
     }
     update() {
+        console.log("Dragbar Update Called()");
         for (let eachKey of Object.keys(this.size))
             this.size[eachKey] = this.parent.size[eachKey];
         if (Container.of(this.parent).direction) {
