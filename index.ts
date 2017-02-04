@@ -68,6 +68,13 @@ export class Handler {
 
     static startHandler() {
         console.log("Handler Started");
+
+        let style = document.createElement("style");
+        style.type = "text/css";
+        style.innerHTML = ".Hdragbar { position: fixed; }";
+        style.innerHTML += ".Vdragbar { position: fixed; }";
+        document.getElementsByTagName("head")[0].appendChild(style);
+
         Handler.urlCurrent = window.location.href;
         if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
