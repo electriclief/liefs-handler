@@ -418,12 +418,14 @@ class Dragbar {
         this.width = width || Container.of(item).margin || Container.marginDefault;
     }
     static mouseDown(e, dragbar) {
+        event.preventDefault();
         Dragbar.isDown = true;
     }
     static mouseUp(e) {
         Dragbar.isDown = false;
     }
     static mouseMove(e) {
+        event.preventDefault();
         if (Dragbar.isDown) {
             console.log(e.clientX, e.clientY);
         }
