@@ -417,10 +417,10 @@ class Dragbar {
         this.width = width || Container.of(item).margin || Container.marginDefault;
     }
     static mouseDown(e) {
-        console.log("MouseDown");
+        console.log(e);
     }
     static mouseUp(e) {
-        console.log("MouseUp");
+        console.log(e);
     }
     update() {
         console.log("Dragbar Update Called()");
