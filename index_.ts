@@ -71,13 +71,13 @@
         style.innerHTML += ".Vdragbar { position: fixed; }";
         document.getElementsByTagName("head")[0].appendChild(style);
 
-        document.body.onmousedown = function(e: Event) {
-           let f = window.event ? event.srcElement : e.target;
-           if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-             console.log("MouseDown On");
-             console.log(f);
-           }
-        };
+        // document.body.onmousedown = function(e: Event) {
+        //    let f = window.event ? event.srcElement : e.target;
+        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
+        //      console.log("MouseDown On");
+        //      console.log(f);
+        //    }
+        // };
 
 
         Handler.urlCurrent = window.location.href;
@@ -394,6 +394,9 @@
 declare var jasmineTests: boolean;
 
  class Dragbar {
+  static mouseDown (e: Event) {
+    console.log("MouseDown");
+  }
   Selector = () => { return this.parent.selector() + " > ." + (this.parent.lastDirection ? "H" : "V") + "dragbar"; };
   el: Element;
   size: Coord = new Coord();
@@ -411,8 +414,7 @@ declare var jasmineTests: boolean;
         if (this.parent.el.firstChild) this.parent.el.insertBefore(this.el, this.parent.el.firstChild);
         else this.parent.el.appendChild(this.el);
     }
-//    this width = (width) ? width : ()
-
+    onEvent(this.el, "mousedown", Dragbar.mouseDown);
     this.width = width || Container.of(item).margin || Container.marginDefault;
   }
   update() {

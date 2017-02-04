@@ -55,13 +55,13 @@ class Handler {
         style.innerHTML = ".Hdragbar { position: fixed; }";
         style.innerHTML += ".Vdragbar { position: fixed; }";
         document.getElementsByTagName("head")[0].appendChild(style);
-        document.body.onmousedown = function (e) {
-            let f = window.event ? event.srcElement : e.target;
-            if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-                console.log("MouseDown On");
-                console.log(f);
-            }
-        };
+        // document.body.onmousedown = function(e: Event) {
+        //    let f = window.event ? event.srcElement : e.target;
+        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
+        //      console.log("MouseDown On");
+        //      console.log(f);
+        //    }
+        // };
         Handler.urlCurrent = window.location.href;
         if (Handler.urlCurrent.slice(0, 4) !== "file")
             (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
@@ -409,8 +409,11 @@ class Dragbar {
             else
                 this.parent.el.appendChild(this.el);
         }
-        //    this width = (width) ? width : ()
+        onEvent(this.el, "mousedown", Dragbar.mouseDown);
         this.width = width || Container.of(item).margin || Container.marginDefault;
+    }
+    static mouseDown(e) {
+        console.log("MouseDown");
     }
     update() {
         console.log("Dragbar Update Called()");

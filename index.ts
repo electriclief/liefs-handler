@@ -76,13 +76,13 @@ export class Handler {
         style.innerHTML += ".Vdragbar { position: fixed; }";
         document.getElementsByTagName("head")[0].appendChild(style);
 
-        document.body.onmousedown = function(e: Event) {
-           let f = window.event ? event.srcElement : e.target;
-           if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-             console.log("MouseDown On");
-             console.log(f);
-           }
-        };
+        // document.body.onmousedown = function(e: Event) {
+        //    let f = window.event ? event.srcElement : e.target;
+        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
+        //      console.log("MouseDown On");
+        //      console.log(f);
+        //    }
+        // };
 
 
         Handler.urlCurrent = window.location.href;
