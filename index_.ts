@@ -399,10 +399,10 @@ declare var jasmineTests: boolean;
     console.log("Dragbar Update Called()");
     for (let eachKey of Object.keys(this.size)) this.size[eachKey] = this.parent.size[eachKey];
     if (Container.of(this.parent).direction) {
-      this.size.x += -Math.round(this.width / 2.0) + ((this.front) ? this.parent.size.width : 0);
+      this.size.x += -Math.round(this.width / 2.0) + this.parent.size.width;
       this.size.width = this.width;
     } else {
-      this.size.y += -Math.round(this.width / 2.0) + ((this.front) ? this.parent.size.height : 0);
+      this.size.y += -Math.round(this.width / 2.0) + this.parent.size.height;
       this.size.height = this.width;
     }
 //  }
