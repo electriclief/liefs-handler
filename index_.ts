@@ -439,7 +439,7 @@ declare var jasmineTests: boolean;
         this.el = document.querySelectorAll(this.Selector())[0];
     else {
         this.el = document.createElement("div");
-        this.el.className = "Hdragbar"; // gets updated anyways - this is just a reminder
+        this.el.className = Container.of(item).direction ? "Hdragbar" : "Vdragbar";
         if (this.parent.el.firstChild) this.parent.el.insertBefore(this.el, this.parent.el.firstChild);
         else this.parent.el.appendChild(this.el);
     }
@@ -452,9 +452,11 @@ declare var jasmineTests: boolean;
     onEvent(this.el, "mousedown", (e) => { Dragbar.mouseDown(e, this); } );
 
     this.width = width || Container.of(item).margin || Container.marginDefault;
+
+
   }
   update() {
-//    console.log("Dragbar Update Called()");
+    console.log("Dragbar Update Called()");
     for (let eachKey of Object.keys(this.size)) this.size[eachKey] = this.parent.size[eachKey];
     if (Container.of(this.parent).direction) {
       this.size.x += this.parent.size.width;
@@ -769,17 +771,17 @@ declare var jasmineTests: boolean;
         let totalPercent: number = 0;
         for (let eachItem of this.items)
             if (eachItem.start.slice(-1) === "%") totalPercent += parseInt(eachItem.start.slice(0, -1));
-            else if ((eachItem.start.slice(-2) === "px")) {
-                console.log(eachItem.label);
-                console.log(eachItem.dragBar);
-                if (eachItem.dragBar) {
-                    console.log("before");
-                    console.log(eachItem.dragBar.el.className);
-                    eachItem.dragBar.el.className = this.direction ? "Hdragbar" : "Vdragbar";
-                    console.log("after");
-                    console.log(eachItem.dragBar.el.className);
-                }
-            }
+            // else if ((eachItem.start.slice(-2) === "px")) {
+            //     console.log(eachItem.label);
+            //     console.log(eachItem.dragBar);
+            //     if (eachItem.dragBar) {
+            //         console.log("before");
+            //         console.log(eachItem.dragBar.el.className);
+            //         eachItem.dragBar.el.className = this.direction ? "Hdragbar" : "Vdragbar";
+            //         console.log("after");
+            //         console.log(eachItem.dragBar.el.className);
+            //     }
+            // }
         if (totalPercent !== 100) liefsError.badArgs(this.label + " to total 100%", " a total of " + totalPercent.toString() + "%", "Container.itemsCheck()");
     }
 
