@@ -434,6 +434,11 @@ class Dragbar {
             let pItem = Dragbar.activeDragbar.parent;
             let dragDiff = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
             let newCurrent = vpx(pItem.current) + dragDiff;
+            if (pItem.min && (newCurrent > vpx(pItem.min)))
+                newCurrent = vpx(pItem.min);
+            if (pItem.max && (newCurrent > vpx(pItem.max)))
+                newCurrent = vpx(pItem.max);
+            console.log(newCurrent);
         }
     }
     update() {

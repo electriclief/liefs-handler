@@ -408,12 +408,14 @@ declare var jasmineTests: boolean;
   static mouseMove (e: any) {
     if (Dragbar.isDown) {
       event.preventDefault();
-      let pItem = Dragbar.activeDragbar.parent;
-      let dragDiff = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
-      let newCurrent = vpx(pItem.current) + dragDiff;
-//      if (newCuurent > pItem.max)
+      let pItem: Item = Dragbar.activeDragbar.parent;
+      let dragDiff: number = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
+      let newCurrent: number = vpx(pItem.current) + dragDiff;
 
-//      console.log(dragDiff);
+      if (pItem.min && (newCurrent > vpx(pItem.min))) newCurrent = vpx(pItem.min);
+      if (pItem.max && (newCurrent > vpx(pItem.max))) newCurrent = vpx(pItem.max);
+
+      console.log(newCurrent);
     }
   }
   static activeDragbar: Dragbar;
