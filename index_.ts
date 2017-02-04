@@ -651,15 +651,15 @@ declare var jasmineTests: boolean;
  let getItem = Item.get;
 
  class Container {
-  static of(item: Item) {
-    for (let eachKey of Object.keys(Container.containers))
-      if (Container.containers[eachKey].items.indexOf(item) > -1)
-        return Container.containers[eachKey];
-    console.log("Container of Error: Containers");
-    console.log(Container.containers);
-    console.log(item);
-    return undefined;
-  }
+    static of(item: Item) {
+        for (let eachKey of Object.keys(Container.containers))
+            if (Container.containers[eachKey].items.indexOf(item) > -1)
+                return Container.containers[eachKey];
+        console.log("Container of Error: Containers");
+        console.log(Container.containers);
+        console.log(item);
+        return undefined;
+    }
     static get(label: string) {
         if (label in Container.containers) return Container.containers[label];
         return undefined;
@@ -744,8 +744,10 @@ declare var jasmineTests: boolean;
     static marginDefault: number = 4;
     static suspectedRoot: Container;
     static lastDefined: Container;
-    static root() {return (Container.suspectedRoot)
-                    ? Container.suspectedRoot : Container.lastDefined; }
+    static root() {
+        return (Container.suspectedRoot)
+            ? Container.suspectedRoot : Container.lastDefined;
+    }
 
     label: string;
     margin: number;
@@ -769,12 +771,14 @@ declare var jasmineTests: boolean;
             if (eachItem.start.slice(-1) === "%") totalPercent += parseInt(eachItem.start.slice(0, -1));
             else if ((eachItem.start.slice(-2) === "px")) {
                 console.log(eachItem.dragBar);
-                console.log("before");
-                console.log(eachItem.dragBar.el.className);
-                eachItem.dragBar.el.className = this.direction ? "Hdragbar" : "Vdragbar";
-                console.log("after");
-                console.log(eachItem.dragBar.el.className);
-              }
+                if (eachItem.dragBar) {
+                    console.log("before");
+                    console.log(eachItem.dragBar.el.className);
+                    eachItem.dragBar.el.className = this.direction ? "Hdragbar" : "Vdragbar";
+                    console.log("after");
+                    console.log(eachItem.dragBar.el.className);
+                }
+            }
         if (totalPercent !== 100) liefsError.badArgs(this.label + " to total 100%", " a total of " + totalPercent.toString() + "%", "Container.itemsCheck()");
     }
 
@@ -782,10 +786,10 @@ declare var jasmineTests: boolean;
         this.lastUpdate = Container.updateRecursive(width, height, this, xOffset, yOffset, includeParents);
     }
     itemByLabel(label: string): Item {
-      for (let item of this.items)
-        if (item.label === label) return item;
-          else if (item.container && item.container.itemByLabel(label)) return item.container.itemByLabel(label);
-      return undefined;
+        for (let item of this.items)
+            if (item.label === label) return item;
+            else if (item.container && item.container.itemByLabel(label)) return item.container.itemByLabel(label);
+        return undefined;
     }
 }
 
