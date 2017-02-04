@@ -73,10 +73,11 @@ export class Handler {
         }
         for (let eachKey of Object.keys(Handler.showObj))
             if (!Handler.showObj[eachKey].show) {
-                //                console.log("before Hidden"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
                 });
+                if (Item.get(eachKey) && Item.get(eachKey).dragBar)
+                    Item.get(eachKey).dragBar.update();
             }
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj))

@@ -81,11 +81,10 @@
         }
         for (let eachKey of Object.keys(Handler.showObj))
             if (!Handler.showObj[eachKey].show) {
-                //                console.log("before Hidden"); console.log(Handler.showObj[eachKey].el);
                 directiveSetStyles(Handler.showObj[eachKey].el, {
                     visibility: "hidden", left: "1px", top: "1px", width: "1px", height: "1px"
                 });
-                //                console.log("After Hidden"); console.log(Handler.showObj[eachKey].el);
+                if (Item.get(eachKey) && Item.get(eachKey).dragBar) Item.get(eachKey).dragBar.update();
             }
     }
     static Hide() { for (let eachKey of Object.keys(Handler.showObj)) Handler.showObj[eachKey].show = false; }
@@ -415,7 +414,7 @@ declare var jasmineTests: boolean;
 }
 
  class Item {
-    static get(label: string, instance = 0) {
+    static get(label: string, instance = 0): Item {
         if (label in Item.items) return Item.items[label][instance];
         return undefined;
     }
