@@ -203,6 +203,7 @@
 }
 
  function px(value: number): string { return value.toString() + "px"; }
+ function vpx(value: string): number { return parseInt(value.slice(0, -2)); }
 
  function TypeOf(value: any, match: string = undefined): string | boolean {
     let ctype: string = typeof value, temp: string;
@@ -396,6 +397,7 @@ declare var jasmineTests: boolean;
  class Dragbar {
   static mouseDown (e: any, dragbar: Dragbar) {
     event.preventDefault();
+    Dragbar.activeDragbar = dragbar;
     Dragbar.isDown = true;
     Dragbar.direction = Container.of(dragbar.parent).direction;
     Dragbar.dragstart = Dragbar.direction ? e.clientX : e.clientY;
@@ -406,10 +408,15 @@ declare var jasmineTests: boolean;
   static mouseMove (e: any) {
     if (Dragbar.isDown) {
       event.preventDefault();
+      let pItem = Dragbar.activeDragbar.parent;
       let dragDiff = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
-      console.log(dragDiff);
+      let newCurrent = vpx(pItem.current) + dragDiff;
+//      if (newCuurent > pItem.max)
+
+//      console.log(dragDiff);
     }
   }
+  static activeDragbar: Dragbar;
   static direction: boolean;
   static dragstart: number;
   static isDown = false;

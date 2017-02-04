@@ -199,6 +199,7 @@ function isStart(value) {
     return value.slice(-1) === "%" || value.slice(-2) === "px";
 }
 function px(value) { return value.toString() + "px"; }
+function vpx(value) { return parseInt(value.slice(0, -2)); }
 function TypeOf(value, match = undefined) {
     let ctype = typeof value, temp;
     if (ctype === "object")
@@ -419,6 +420,7 @@ class Dragbar {
     }
     static mouseDown(e, dragbar) {
         event.preventDefault();
+        Dragbar.activeDragbar = dragbar;
         Dragbar.isDown = true;
         Dragbar.direction = Container.of(dragbar.parent).direction;
         Dragbar.dragstart = Dragbar.direction ? e.clientX : e.clientY;
@@ -429,8 +431,9 @@ class Dragbar {
     static mouseMove(e) {
         if (Dragbar.isDown) {
             event.preventDefault();
+            let pItem = Dragbar.activeDragbar.parent;
             let dragDiff = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
-            console.log(dragDiff);
+            let newCurrent = vpx(pItem.current) + dragDiff;
         }
     }
     update() {
