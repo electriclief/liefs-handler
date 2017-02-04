@@ -159,7 +159,10 @@
         throw reference + " Expected " + expected + " received " + received + ".";
     }
 };
-
+ function onEvent (el: any, eventType: string, eventFunction: Function) {
+  if (el.addEventListener) el.addEventListener(eventType, eventFunction, false);
+  else if (el.attachEvent) el.attachEvent(eventType, eventFunction);
+}
  function uniqueArray(array: Array<any>, optionalConcatArray: Array<any> = []) {
     let a = array.concat(optionalConcatArray);
     for (let i = 0; i < a.length; ++i) for (let j = i + 1; j < a.length; ++j) if (a[i] === a[j]) a.splice(j--, 1);

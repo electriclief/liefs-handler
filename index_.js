@@ -150,6 +150,12 @@ let liefsError = {
         throw reference + " Expected " + expected + " received " + received + ".";
     }
 };
+function onEvent(el, eventType, eventFunction) {
+    if (el.addEventListener)
+        el.addEventListener(eventType, eventFunction, false);
+    else if (el.attachEvent)
+        el.attachEvent(eventType, eventFunction);
+}
 function uniqueArray(array, optionalConcatArray = []) {
     let a = array.concat(optionalConcatArray);
     for (let i = 0; i < a.length; ++i)
