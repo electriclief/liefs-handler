@@ -412,7 +412,7 @@ declare var jasmineTests: boolean;
       let dragDiff: number = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
       let newCurrent: number = vpx(pItem.current) + dragDiff;
 
-      if (pItem.min && (newCurrent > vpx(pItem.min))) newCurrent = vpx(pItem.min);
+      if (pItem.min && (newCurrent < vpx(pItem.min))) newCurrent = vpx(pItem.min);
       if (pItem.max && (newCurrent > vpx(pItem.max))) newCurrent = vpx(pItem.max);
 
       console.log(newCurrent);
