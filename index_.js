@@ -420,14 +420,17 @@ class Dragbar {
     static mouseDown(e, dragbar) {
         event.preventDefault();
         Dragbar.isDown = true;
+        Dragbar.direction = Container.of(dragbar.parent).direction;
+        Dragbar.dragstart = Dragbar.direction ? e.clientX : e.clientY;
     }
     static mouseUp(e) {
         Dragbar.isDown = false;
     }
     static mouseMove(e) {
-        event.preventDefault();
         if (Dragbar.isDown) {
-            console.log(e.clientX, e.clientY);
+            event.preventDefault();
+            let dragNew = Dragbar.direction ? e.clientX : e.clientY;
+            console.log(Dragbar.dragstart - dragNew);
         }
     }
     update() {
@@ -442,8 +445,6 @@ class Dragbar {
             this.size.y += this.parent.size.height;
             this.size.height = this.width;
         }
-        //  }
-        //  set() {
         directiveSetStyles(this.el, {
             left: px(this.size.x), top: px(this.size.y), width: px(this.size.width), height: px(this.size.height)
         });
@@ -452,10 +453,6 @@ class Dragbar {
 Dragbar.isDown = false;
 Dragbar.noInit = true;
 class Item {
-    //    dragSelector = () => { return this.selector() + " > ." + (this.lastDirection ? "H" : "V") + "dragbar"; };
-    //    dragEl: Element;
-    //    dragbar: Coord;
-    //    dragFront: boolean = true;
     constructor(label, start, min = undefined, max = undefined, container = undefined) {
         this.lastDirection = true;
         this.selector = () => { return "#" + this.label; };
