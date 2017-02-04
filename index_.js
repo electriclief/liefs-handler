@@ -421,6 +421,7 @@ class Dragbar {
     static mouseDown(e, dragbar) {
         event.preventDefault();
         Dragbar.activeDragbar = dragbar;
+        Dragbar.beforeCurrent = dragbar.parent.current;
         Dragbar.isDown = true;
         Dragbar.direction = Container.of(dragbar.parent).direction;
         Dragbar.dragstart = Dragbar.direction ? e.clientX : e.clientY;
@@ -433,7 +434,7 @@ class Dragbar {
             event.preventDefault();
             let pItem = Dragbar.activeDragbar.parent;
             let dragDiff = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
-            let newCurrent = vpx(pItem.current) + dragDiff;
+            let newCurrent = vpx(Dragbar.beforeCurrent) + dragDiff;
             if (pItem.min && (newCurrent < vpx(pItem.min)))
                 newCurrent = vpx(pItem.min);
             if (pItem.max && (newCurrent > vpx(pItem.max)))

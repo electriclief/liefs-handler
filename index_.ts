@@ -398,6 +398,7 @@ declare var jasmineTests: boolean;
   static mouseDown (e: any, dragbar: Dragbar) {
     event.preventDefault();
     Dragbar.activeDragbar = dragbar;
+    Dragbar.beforeCurrent = dragbar.parent.current;
     Dragbar.isDown = true;
     Dragbar.direction = Container.of(dragbar.parent).direction;
     Dragbar.dragstart = Dragbar.direction ? e.clientX : e.clientY;
@@ -410,7 +411,7 @@ declare var jasmineTests: boolean;
       event.preventDefault();
       let pItem: Item = Dragbar.activeDragbar.parent;
       let dragDiff: number = (Dragbar.direction ? e.clientX : e.clientY) - Dragbar.dragstart;
-      let newCurrent: number = vpx(pItem.current) + dragDiff;
+      let newCurrent: number = vpx(Dragbar.beforeCurrent) + dragDiff;
 
       if (pItem.min && (newCurrent < vpx(pItem.min))) newCurrent = vpx(pItem.min);
       if (pItem.max && (newCurrent > vpx(pItem.max))) newCurrent = vpx(pItem.max);
@@ -419,6 +420,7 @@ declare var jasmineTests: boolean;
       Handler.resizeEvent();
     }
   }
+  static beforeCurrent: string;
   static activeDragbar: Dragbar;
   static direction: boolean;
   static dragstart: number;
