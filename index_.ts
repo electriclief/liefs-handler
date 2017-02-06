@@ -65,23 +65,13 @@
     static startHandler() {
         console.log("Handler Started");
 
-        let style = document.createElement("style");
-        style.type = "text/css";
-        style.innerHTML = ".Hdragbar { position: fixed; }";
-        style.innerHTML += ".Vdragbar { position: fixed; }";
-        document.getElementsByTagName("head")[0].appendChild(style);
-
-        // document.body.onmousedown = function(e: Event) {
-        //    let f = window.event ? event.srcElement : e.target;
-        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-        //      console.log("MouseDown On");
-        //      console.log(f);
-        //    }
-        // };
-
-
-        Handler.urlCurrent = window.location.href;
-        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
+        // let style = document.createElement("style");
+        // style.type = "text/css";
+        // style.innerHTML = ".Hdragbar { position: fixed; }";
+        // style.innerHTML += ".Vdragbar { position: fixed; }";
+        // document.getElementsByTagName("head")[0].appendChild(style);
+//        Handler.urlCurrent = window.location.href;
+//        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -163,12 +153,13 @@
   if (el.addEventListener) el.addEventListener(eventType, eventFunction, false);
   else if (el.attachEvent) el.attachEvent(eventType, eventFunction);
 }
+/*
  function uniqueArray(array: Array<any>, optionalConcatArray: Array<any> = []) {
     let a = array.concat(optionalConcatArray);
     for (let i = 0; i < a.length; ++i) for (let j = i + 1; j < a.length; ++j) if (a[i] === a[j]) a.splice(j--, 1);
     return a;
 }
-
+*/
  function nthIndex(str: string, pat: string, n: number): number {
     let L = str.length, i = -1;
     while (n-- && i++ < L) {
@@ -285,7 +276,7 @@
     }
     return returnArray;
 }
-
+/*
  function loadDoc(eid: string, page: string): void {
     CheckArgTypes(arguments, ["string", "string"], "loadDoc()");
     let e = document.getElementById(eid);
@@ -299,11 +290,11 @@
         xhttp.send();
     }
 }
-
+*/
  function directiveSetStyles(el: Element, stylesObject: {}): void {
     for (let key of Object.keys(stylesObject)) el["style"][key] = stylesObject[key];
 }
-
+/*
  function waitForIt(conditionFunction: Function, actionFunction: Function): void {
     CheckArgTypes(arguments, ["function", "function"], "waitForIt()");
     if (!conditionFunction())
@@ -311,6 +302,7 @@
     else
         actionFunction();
 }
+
  function createElement(type: string): Element {
     CheckArgTypes(arguments, ["string"], "createElement()");
     return document.createElement(type);
@@ -341,17 +333,19 @@
     e.returnValue = false;
     return false;
 }
+ */
  function isItIn(key: string, object: {}) {
     //    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
     let keys = Object.keys(object);
     if (keys.indexOf(key) === -1) return null;
     return object[key];
 }
-
+/*
  function throwType(expected: string, received: string, reference: string = "") {
     CheckArgTypes(arguments, ["string", "string", "string"], reference + " throwType()", false);
     throw "Invalid Type Entered " + reference + " expected type " + expected + " received type " + received;
 }
+*/
  function Objectassign(obj: any): {} { // where obj is Directive object
     let ro = {};
     for (let key in obj) ro[key] = obj[key];
@@ -383,11 +377,11 @@
             this.height = w.innerHeight || e.clientHeight || g.clientHeight;
             this.x = 0; this.y = 0;
         } else {
-            this.width = el.style.width, this.height = el.style.height;
+            this.width = el.style.width; this.height = el.style.height;
             let x: number = el.offsetLeft, y: number = el.offsetTop;
             if (byRoot) for (x = 0, y = 0; el != null;
                 x += el.offsetLeft, y += el.offsetTop, el = el.offsetParent);
-            this.x = x, this.y = y;
+            this.x = x; this.y = y;
         }
     }
 }

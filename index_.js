@@ -50,21 +50,13 @@ class Handler {
     }
     static startHandler() {
         console.log("Handler Started");
-        let style = document.createElement("style");
-        style.type = "text/css";
-        style.innerHTML = ".Hdragbar { position: fixed; }";
-        style.innerHTML += ".Vdragbar { position: fixed; }";
-        document.getElementsByTagName("head")[0].appendChild(style);
-        // document.body.onmousedown = function(e: Event) {
-        //    let f = window.event ? event.srcElement : e.target;
-        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-        //      console.log("MouseDown On");
-        //      console.log(f);
-        //    }
-        // };
-        Handler.urlCurrent = window.location.href;
-        if (Handler.urlCurrent.slice(0, 4) !== "file")
-            (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
+        // let style = document.createElement("style");
+        // style.type = "text/css";
+        // style.innerHTML = ".Hdragbar { position: fixed; }";
+        // style.innerHTML += ".Vdragbar { position: fixed; }";
+        // document.getElementsByTagName("head")[0].appendChild(style);
+        //        Handler.urlCurrent = window.location.href;
+        //        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
@@ -156,14 +148,13 @@ function onEvent(el, eventType, eventFunction) {
     else if (el.attachEvent)
         el.attachEvent(eventType, eventFunction);
 }
-function uniqueArray(array, optionalConcatArray = []) {
+/*
+ function uniqueArray(array: Array<any>, optionalConcatArray: Array<any> = []) {
     let a = array.concat(optionalConcatArray);
-    for (let i = 0; i < a.length; ++i)
-        for (let j = i + 1; j < a.length; ++j)
-            if (a[i] === a[j])
-                a.splice(j--, 1);
+    for (let i = 0; i < a.length; ++i) for (let j = i + 1; j < a.length; ++j) if (a[i] === a[j]) a.splice(j--, 1);
     return a;
 }
+*/
 function nthIndex(str, pat, n) {
     let L = str.length, i = -1;
     while (n-- && i++ < L) {
@@ -283,7 +274,8 @@ function directive(querrySelectorAll, attributesList) {
     }
     return returnArray;
 }
-function loadDoc(eid, page) {
+/*
+ function loadDoc(eid: string, page: string): void {
     CheckArgTypes(arguments, ["string", "string"], "loadDoc()");
     let e = document.getElementById(eid);
     if (e) {
@@ -296,49 +288,51 @@ function loadDoc(eid, page) {
         xhttp.send();
     }
 }
+*/
 function directiveSetStyles(el, stylesObject) {
     for (let key of Object.keys(stylesObject))
         el["style"][key] = stylesObject[key];
 }
-function waitForIt(conditionFunction, actionFunction) {
+/*
+ function waitForIt(conditionFunction: Function, actionFunction: Function): void {
     CheckArgTypes(arguments, ["function", "function"], "waitForIt()");
     if (!conditionFunction())
         window.setTimeout(waitForIt.bind(null, conditionFunction, actionFunction), 100);
     else
         actionFunction();
 }
-function createElement(type) {
+
+ function createElement(type: string): Element {
     CheckArgTypes(arguments, ["string"], "createElement()");
     return document.createElement(type);
 }
-function fillDivWithText(text, element) {
+ function fillDivWithText(text: string, element: Element): Element {
     return element["createTextNode"](text);
 }
-function addAttribute(element, name, value) {
+ function addAttribute(element: Element, name: string, value: string): Element {
     let att = document.createAttribute(name);
     att.value = value;
     element.setAttributeNode(att);
     return element;
 }
-function obid(id) {
+ function obid(id: string): Element {
     CheckArgTypes(arguments, ["string"], "obid()");
     return document.getElementById(id);
 }
-function pauseEvent(e, key = "selection") {
+ function pauseEvent(e: Event, key: string = "selection"): boolean { // makes it so so
     if (document[key]) {
         document[key].empty();
-    }
-    else if (window.getSelection) {
+    } else if (window.getSelection) {
         window.getSelection().removeAllRanges();
     }
-    if (e.stopPropagation)
-        e.stopPropagation();
-    if (e.preventDefault)
-        e.preventDefault();
+
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
     e.cancelBubble = true;
     e.returnValue = false;
     return false;
 }
+ */
 function isItIn(key, object) {
     //    CheckArgTypes(arguments, ["string", "object"], "isItIn()");
     let keys = Object.keys(object);
@@ -346,10 +340,12 @@ function isItIn(key, object) {
         return null;
     return object[key];
 }
-function throwType(expected, received, reference = "") {
+/*
+ function throwType(expected: string, received: string, reference: string = "") {
     CheckArgTypes(arguments, ["string", "string", "string"], reference + " throwType()", false);
     throw "Invalid Type Entered " + reference + " expected type " + expected + " received type " + received;
 }
+*/
 function Objectassign(obj) {
     let ro = {};
     for (let key in obj)
@@ -384,12 +380,14 @@ class Coord {
             this.y = 0;
         }
         else {
-            this.width = el.style.width, this.height = el.style.height;
+            this.width = el.style.width;
+            this.height = el.style.height;
             let x = el.offsetLeft, y = el.offsetTop;
             if (byRoot)
                 for (x = 0, y = 0; el != null; x += el.offsetLeft, y += el.offsetTop, el = el.offsetParent)
                     ;
-            this.x = x, this.y = y;
+            this.x = x;
+            this.y = y;
         }
     }
 }

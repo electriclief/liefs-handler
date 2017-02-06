@@ -1,7 +1,7 @@
-import { liefsError, TypeOf, CheckArgTypes, throwType, isStart, argsObj, setArgsObj, isUniqueSelector, directiveSetStyles, px } from "liefs-lib";
+import { liefsError, argsObj, setArgsObj, isUniqueSelector, directiveSetStyles, px } from "liefs-lib"; /* , TypeOf, CheckArgTypes, throwType, isStart */
 import { Coord } from "liefs-coordinates";
-import { Item, I, v, h, items, getItem } from "liefs-item";
-import { Container, containers, getContainer } from "liefs-container";
+import { Item } from "liefs-item"; /* , I, v, h, items, getItem */
+import { Container } from "liefs-container"; /* , containers, getContainer  */
 import { Layout } from "liefs-layout";
 
 export class Handler {
@@ -70,23 +70,13 @@ export class Handler {
     static startHandler() {
         console.log("Handler Started");
 
-        let style = document.createElement("style");
-        style.type = "text/css";
-        style.innerHTML = ".Hdragbar { position: fixed; }";
-        style.innerHTML += ".Vdragbar { position: fixed; }";
-        document.getElementsByTagName("head")[0].appendChild(style);
-
-        // document.body.onmousedown = function(e: Event) {
-        //    let f = window.event ? event.srcElement : e.target;
-        //    if (f["className"] && f["className"].indexOf("Hdragbar") !== -1) {
-        //      console.log("MouseDown On");
-        //      console.log(f);
-        //    }
-        // };
-
-
-        Handler.urlCurrent = window.location.href;
-        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
+        // let style = document.createElement("style");
+        // style.type = "text/css";
+        // style.innerHTML = ".Hdragbar { position: fixed; }";
+        // style.innerHTML += ".Vdragbar { position: fixed; }";
+        // document.getElementsByTagName("head")[0].appendChild(style);
+//        Handler.urlCurrent = window.location.href;
+//        if (Handler.urlCurrent.slice(0, 4) !== "file") (Handler.urlCurrent = "/" + myIndexOf(Handler.urlCurrent, "/", 2, 0));
         if (!Handler.handlers.length)
             H("defaultHandler", L("defaultLayout", Container.root(), (x, y) => { return true; }));
         Handler.createDivList();
